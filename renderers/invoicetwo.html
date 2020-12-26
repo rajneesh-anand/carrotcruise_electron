@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--Import Google Icon Font-->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="../assets/css/materialize.min.css" />
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .input-field {
+        margin-bottom: 0px !important;
+      }
+      td {
+        padding: 8px 5px;
+        text-align: right;
+        color: rgb(3, 19, 11);
+        font-weight: 600;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        width: 50px;
+      }
+      th {
+        text-align: center !important;
+        border-radius: 0 !important;
+        background-color: lightgray;
+      }
+      tr {
+        border: none;
+      }
+      table#valueInput td {
+        text-align: right;
+      }
+      .print-wrap {
+        width: 500px;
+      }
+
+      #cgstRate {
+        display: block !important;
+        width: 4rem !important;
+        height: 2rem !important;
+        padding-left: 15px !important;
+        margin-left: 15px !important;
+        border: 1px solid rgb(0, 0, 0);
+        transition: all 1s;
+        border-radius: 0.25rem !important;
+        box-shadow: none;
+      }
+
+      #cgstRate:focus {
+        border-color: blue !important;
+      }
+      label {
+        color: #131010 !important;
+      }
+    </style>
+  </head>
+
+  <body onkeydown="return (event.keyCode!=13)" style="width: 100%">
+    <div
+      class="row"
+      style="display: flex; padding-left: 1rem; padding-right: 1rem"
+    >
+      <h6 class="flow-text teal-text text-darken-3">NEW INVOICE</h6>
+
+      <a
+        class="btn-flat"
+        id="btnClose"
+        style="margin-left: auto; padding-top: 1rem"
+      >
+        <i class="material-icons right">close</i></a
+      >
+    </div>
+    <div class="row" style="margin-top: 15px">
+      <form method="post" class="col s12">
+        <div class="row" style="margin-bottom: 0px !important">
+          <div class="input-field col s3">
+            <i class="material-icons prefix">arrow_forward</i>
+            <input
+              placeholder=""
+              id="invoice_no"
+              type="text"
+              class="validate"
+              name="invoice_no"
+              readonly
+            />
+            <label for="invoice_no">INVOICE NO.</label>
+          </div>
+
+          <div class="input-field col s3">
+            <i class="material-icons prefix">date_range</i>
+            <input
+              id="invoice_date"
+              type="text"
+              name="invoice_date"
+              class="datepicker"
+              required
+            />
+            <label for="invoice_date">INVOICE DATE</label>
+          </div>
+
+          <div class="col s6">
+            <label>M/S NAME</label>
+            <select name="agent" class="browser-default agentName">
+              <option value="" disabled selected>Select Agent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 0px !important">
+          <div>
+            <button
+              class="btn-small waves-effect waves-light"
+              id="btnInsertNewRow"
+            >
+              ADD ITEM<i class="material-icons right">add</i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="row"
+          style="margin-bottom: 0px !important; margin-top: 10px"
+        >
+          <div class="col s8">
+            <table id="itemTable" class="stripped">
+              <tr>
+                <th>Particulars</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th></th>
+              </tr>
+            </table>
+          </div>
+
+          <div class="col s4">
+            <div style="background-color: aquamarine">
+              <div
+                style="
+                  display: flex;
+                  padding-top: 40px;
+                  padding-bottom: 24px;
+                  align-items: flex-end;
+                "
+              >
+                <label>BASE AMOUNT</label>
+                <label id="baseAmt"></label>
+              </div>
+              <div style="display: flex">
+                <label>CGST</label>
+                <input
+                  type="text"
+                  id="cgstRate"
+                  value=""
+                  placeholder="rate"
+                  onkeypress="return isNumberKey(event,this);"
+                  onkeyup="CalculateTotal(this);"
+                />
+                <h4 id="cgstAmount"></h4>
+              </div>
+              <div style="display: flex">
+                <h6>IGST</h6>
+                <input
+                  type="text"
+                  id="igstRate"
+                  value=""
+                  placeholder="rate"
+                  onkeypress="return isNumberKey(event,this);"
+                  onkeyup="CalculateTotal(this);"
+                />
+                <h4 id="igstAmount"></h4>
+              </div>
+              <div style="display: flex">
+                <h6>SGST</h6>
+                <input
+                  type="text"
+                  id="sgstRate"
+                  value=""
+                  placeholder="rate"
+                  onkeypress="return isNumberKey(event,this);"
+                  onkeyup="CalculateTotal(this);"
+                />
+                <h4 id="sgstAmount"></h4>
+              </div>
+              <div>
+                <h4 id="totalAmount"></h4>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 0px !important">
+          <div class="right-align">
+            <button class="btn-small waves-effect waves-light" id="btnSave">
+              SAVE
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      if (typeof module === "object") {
+        window.module = module;
+        module = undefined;
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="../assets/js/jquery-3.4.1.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../assets/js/materialize.min.js"
+    ></script>
+
+    <script src="./invoicetwo.js"></script>
+
+    <script>
+      if (window.module) module = window.module;
+    </script>
+  </body>
+</html>

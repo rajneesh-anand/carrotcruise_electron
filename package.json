@@ -4,7 +4,7 @@
 	"description": "Accounting project for shipping",
 	"main": "main.js",
 	"scripts": {
-		"start": "electron ./",
+		"start": "electron .",
 		"dist": "electron-builder build"
 	},
 	"keywords": [],

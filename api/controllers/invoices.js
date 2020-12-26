@@ -51,8 +51,19 @@ module.exports = {
             data: results,
           });
         });
-      },
+      }
     );
+  },
+
+  insertInvoiceItems: (req, res) => {
+    const body = req.body;
+    console.log(body);
+    var sql =
+      "INSERT INTO invoice_items (particulars, quantity, rate, amount,invoice_number) VALUES ?";
+    pool.query(sql, [body], (err, result) => {
+      if (err) throw err;
+      console.log("Number of records inserted: " + result.affectedRows);
+    });
   },
 
   updateInvoice: (req, res) => {
@@ -105,7 +116,7 @@ module.exports = {
             });
           });
         }
-      },
+      }
     );
   },
 
@@ -129,9 +140,26 @@ module.exports = {
   //     );
   //   },
 
+  findInvoiceRecords: (req, res) => {
+    const query =
+      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,i.Total_Payable_Amt,c.first_name as Agent_Name FROM customers c, invoices i where i.Agent_Name =concat(c.Prefix,c.id)";
+    pool.query(query, [], (err, data) => {
+      if (err) {
+        return res.status(403).json({
+          error: err,
+        });
+      }
+      return res.status(200).json({ data: data });
+    });
+  },
+
   getInvoices: (req, res, next) => {
-    // Get the query string paramters sent by Datatable
     const requestQuery = req.query;
+    // Custome SQL query
+    const query =
+      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,i.Total_Payable_Amt,c.first_name as Agent_Name FROM customers c, invoices i where i.Agent_Name =concat(c.Prefix,c.id)";
+
+    // Get the query string paramters sent by Datatable
 
     let columnsMap = [
       {
@@ -156,9 +184,6 @@ module.exports = {
       },
     ];
 
-    // Custome SQL query
-    const query =
-      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,i.Total_Payable_Amt,c.first_name as Agent_Name FROM customers c, invoices i where i.Agent_Name =concat(c.Prefix,c.id)";
     // NodeTable requires table's primary key to work properly
     const primaryKey = "Invoice_Id";
 
@@ -166,7 +191,7 @@ module.exports = {
       requestQuery,
       query,
       primaryKey,
-      columnsMap,
+      columnsMap
     );
 
     nodeTable.output((err, data) => {
@@ -209,7 +234,7 @@ module.exports = {
             data: results,
           });
         }
-      },
+      }
     );
   },
 

@@ -88,38 +88,14 @@ const texts = remote.getGlobal("sharedObject").someProperty;
 
 // document.getElementById("abc").value = texts;
 
-function getInvoiceListAPICall(callback) {
-  axios
-    .get(`http://localhost:3000/api/getinvoices`)
-    .then((response) => {
-      dataTableRecords.splice(0, dataTableRecords.length);
-
-      const invData = response.data.data;
-      dataTableRecords = [...invData];
-      return callback(response.data.message);
-    })
-    .catch((error) => {
-      if (error) throw new Error(error);
-    });
+async function ifInvoiceExits() {
+  let { data } = await axios.get(`http://localhost:3000/api/getinvoices`);
+  return data.data.length;
 }
 
-function getCustomerListAPICall(callback) {
-  axios
-    .get(`http://localhost:3000/api/customers`)
-    .then((response) => {
-      dataTableRecords.splice(0, dataTableRecords.length);
-
-      const custData = response.data.data;
-
-      dataTableRecords = [...custData];
-
-      // const custData = response.data.data;
-      // cusdata = [...custData];
-      return callback(response.data.message);
-    })
-    .catch((error) => {
-      if (error) throw new Error(error);
-    });
+async function ifCustomerExits() {
+  let { data } = await axios.get(`http://localhost:3000/api/getcustomers`);
+  return data.data.length;
 }
 
 function getLedgerListAPICall(callback) {
@@ -130,9 +106,6 @@ function getLedgerListAPICall(callback) {
 
       const ledgerData = response.data.data;
       dataTableRecords = [...ledgerData];
-
-      // const ledgerData = response.data.data;
-      // console.log(ledgerData);
 
       // leddata = [...ledgerData];
       return callback(response.data.message);
@@ -239,12 +212,13 @@ $(document).ready(function () {
     // document.getElementById("userEmail").innerText = data.email;
   });
 
-  // getInvoiceListAPICall((response) => {
-  //   if (response === "success") {
-  //     generateInvoiceDataTable();
-  //   }
-  // });
-  generateInvoiceDataTable();
+  ifInvoiceExits().then((res) => {
+    if (res === 0) {
+      noRecordsFound("invoice");
+    } else {
+      generateInvoiceDataTable();
+    }
+  });
 });
 
 const btnlogOut = document.getElementById("btnLogout");
@@ -279,7 +253,7 @@ supButton.addEventListener("click", (event) => {
 
 const invButton = document.getElementById("newInvoice");
 invButton.addEventListener("click", (event) => {
-  ipcRenderer.send("create:invoiceWindow", "invoice");
+  ipcRenderer.send("create:invoiceWindow", "invoicetwo");
 });
 
 const payButton = document.getElementById("payment");
@@ -377,15 +351,13 @@ listReceiveButton.addEventListener("click", (event) => {
 
 const cusListButton = document.getElementById("cusList");
 cusListButton.addEventListener("click", (event) => {
-  $("#invTable_wrapper").remove();
-
-  generateCustomerDataTable();
-
-  // getCustomerListAPICall((response) => {
-  // 	if (response === "success") {
-  // 		generateCustomerDataTable();
-  // 	}
-  // });
+  ifCustomerExits().then((res) => {
+    if (res === 0) {
+      noRecordsFound("customer");
+    } else {
+      generateCustomerDataTable();
+    }
+  });
 });
 
 const supListButton = document.getElementById("supList");
@@ -396,23 +368,28 @@ supListButton.addEventListener("click", (event) => {
 
 const invListButton = document.getElementById("invList");
 invListButton.addEventListener("click", (event) => {
-  $("#invTable_wrapper").remove();
-
-  generateInvoiceDataTable();
-
-  // getInvoiceListAPICall((response) => {
-  //   if (response === "success") {
-  //     generateInvoiceDataTable();
-  //   }
-  // });
+  ifInvoiceExits().then((res) => {
+    if (res === 0) {
+      noRecordsFound("invoice");
+    } else {
+      $("#invTable_wrapper").remove();
+      generateInvoiceDataTable();
+    }
+  });
 });
+
+// No Records Found
+
+function noRecordsFound(table) {
+  document.getElementById(
+    "createTable"
+  ).innerHTML = `No ${table} records available`;
+}
 
 // Invoice DataTable
 
 function generateInvoiceDataTable() {
-  let rowIndex;
   let invoiceId;
-
   let htmlTemplate = `<table id="invTable" class=" display table table-striped table-bordered dt-responsive nowrap" style="width:100%">
 	<thead>
 		<tr>
@@ -438,7 +415,12 @@ function generateInvoiceDataTable() {
     language: {
       searchPlaceholder: "Search Invoice",
       sSearch: "",
+      paginate: {
+        next: "&#8594;", // or '→'
+        previous: "&#8592;", // or '←'
+      },
     },
+    info: false,
     pageLength: 100,
     columnDefs: [
       {
@@ -448,13 +430,7 @@ function generateInvoiceDataTable() {
         targets: 2,
       },
     ],
-    // columns: [
-    //   { data: "Invoice_Id" },
-    //   { data: "Invoice_Number" },
-    //   { data: "Invoice_Date" },
-    //   { data: "Agent_Name" },
-    //   { data: "Total_Payable_Amt" },
-    // ],
+
     dom: "Bfrtip",
     select: true,
 
@@ -510,7 +486,6 @@ function generateInvoiceDataTable() {
 // Ledger Datatable
 
 function generateLedgerDataTable() {
-  let rowIndex;
   let invoiceId;
   let htmlTemplate = `<table id="ledTable" class=" display table table-striped table-bordered dt-responsive nowrap" style="width:100%">
 	<thead>
@@ -696,15 +671,6 @@ function generateCustomerDataTable() {
     },
     pageLength: 100,
 
-    // data: dataTableRecords,
-
-    // columns: [
-    // 	{ data: "id" },
-    // 	{ data: "first_name" },
-    // 	{ data: "city" },
-    // 	{ data: "State_Name" },
-    // 	{ data: "gstin" },
-    // ],
     dom: "Bfrtip",
     select: true,
 

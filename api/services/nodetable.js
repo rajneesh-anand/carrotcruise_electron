@@ -113,7 +113,6 @@ class NodeTable {
    */
   output(callback) {
     const queryString = this.buildQuery();
-
     this.db.query(queryString, (err, results, fields) => {
       if (err) {
         // Let the client handle the error
@@ -158,9 +157,9 @@ class NodeTable {
               } else {
                 throw new Error("Provide a callable function!");
               }
-            },
+            }
           );
-        },
+        }
       );
     });
   }

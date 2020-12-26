@@ -142,7 +142,7 @@ function createHomeWindow() {
     },
   });
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.loadURL(modalPath);
 
@@ -614,7 +614,7 @@ ipcMain.on("create:invoiceWindow", (event, fileName) => {
   let win = new BrowserWindow({
     resizable: false,
     height: 728,
-    width: width - 66,
+    width: width - 266,
     frame: false,
     title: "Add Invoice",
     parent: mainWindow,
@@ -625,7 +625,7 @@ ipcMain.on("create:invoiceWindow", (event, fileName) => {
     },
   });
 
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   win.loadURL(modalPath);
 

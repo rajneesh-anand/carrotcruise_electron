@@ -70,11 +70,13 @@ exports.generateLedgerPdf = (req, res) => {
 exports.generateLedgerPdfDateWise = (req, res) => {
   const id = req.params.id;
   const args = req.body;
+  const sql = `SELECT c.first_name,c.address_line_one,c.city,c.gstin,c.pincode,s.State_Name from customers c, states s where c.id = ? and c.state =s.id; SELECT EntryDate as EntryDate, EntryType, Comments,Invoice_Number, Debit_Amount as Debit, NULL as Credit FROM payments where Debit_Account =? and EntryDate between ? and ?
+  UNION ALL 
+  SELECT EntryDate as EntryDate,EntryType,Comments,Invoice_Number,  NULL as Debit,Credit_Amount as Credit FROM receive where Credit_Account =? and EntryDate between ? and ?
+  ORDER BY EntryDate`;
+  console.log(sql);
   pool.query(
-    `SELECT c.first_name,c.address_line_one,c.city,c.gstin,c.pincode,s.State_Name from customers c, states s where c.id = ? and c.state =s.id; SELECT EntryDate as EntryDate, EntryType, Comments,Invoice_Number, Debit_Amount as Debit, NULL as Credit FROM payments where Debit_Account =? and EntryDate between ? and ?
-        UNION ALL 
-        SELECT EntryDate as EntryDate,EntryType,Comments,Invoice_Number,  NULL as Debit,Credit_Amount as Credit FROM receive where Credit_Account =? and EntryDate between ? and ?
-        ORDER BY EntryDate`,
+    sql,
     [id.slice(-1), id, args.from, args.to, id, args.from, args.to],
     (error, results) => {
       if (error) {

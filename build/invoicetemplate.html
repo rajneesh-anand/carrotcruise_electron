@@ -130,64 +130,61 @@
       <div>Cruise Base Fare</div>
       <div>{{{currency}}} {{Base_Amt}}</div>
     </div>
+
     {{#if NCF_Amt}}
-    <div class="container row">
-    
+    <div class="container row">    
       <div>N C F</div>
-      <div>{{{currency}}} {{NCF_Amt}}</div>
-     
+      <div>{{{currency}}} {{NCF_Amt}}</div>     
     </div>
     {{/if}}
+
     {{#if TAX_Amt}}
-    <div class="container row">
-     
+    <div class="container row">     
       <div>TAX</div>
-      <div>{{{currency}}} {{TAX_Amt}}</div>
-    
+      <div>{{{currency}}} {{TAX_Amt}}</div>    
     </div>
     {{/if}}
+
     {{#if HS_Amt}}
-    <div class="container row">
-    
+    <div class="container row">    
       <div>Holiday Surcharge</div>
-      <div>{{{currency}}} {{HS_Amt}}</div>
-     
+      <div>{{{currency}}} {{HS_Amt}}</div>     
     </div>
     {{/if}}
+
     {{#if Grat_Amt}}
-    <div class="container row">
-    
+    <div class="container row">    
       <div>Gratuity</div>
-      <div>{{{currency}}} {{Grat_Amt}}</div>
-    
+      <div>{{{currency}}} {{Grat_Amt}}</div>    
     </div>
     {{/if}}
-      {{#if Misc}}
+
+    {{#if Misc}}
       <div class="container row">
       <div>Extra Charges</div>
       <div>{{{currency}}} {{Misc}}</div>
       </div>
-      {{/if}}
-      {{#if Comm_Amt}}
+    {{/if}}
+
+    {{#if Comm_Amt}}
     <div class="container row">    
       <div>Less Commission</div>
       <div>{{{currency}}} {{Comm_Amt}}</div>     
     </div>
     {{/if}}
     
-      {{#if TDS_Amt}}
+    {{#if TDS_Amt}}
       <div class="container row">
       <div>TDS Applicable</div>
       <div>{{{currency}}} {{TDS_Amt}}</div>
       </div>
-      {{/if}}
+    {{/if}}
      
     <hr />
     <div class="container row">
       <div>Sub Total </div>
       <div>{{{currency}}} {{SubTotal}}</div>
     </div>
-
 
     {{#if GSTRate}}
     <div class="container row">     
@@ -204,6 +201,7 @@
       <div></div>    
     </div>
     {{/if}}
+
     {{#if SGST}}
     <div class="container row">   
       <div></div>
@@ -211,8 +209,7 @@
       <div>{{SGSTAmt}}</div>
       <div></div>
     </div>
-    {{/if}}
-    
+    {{/if}}    
      
     {{#if Token_Amt}}
     <div class="container row">    
@@ -220,6 +217,7 @@
       <div>{{{currency}}} {{Token_Amt}}</div>     
     </div>
     {{/if}}
+    
     <div
       class="container row"
       style="

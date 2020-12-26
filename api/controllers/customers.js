@@ -44,7 +44,7 @@ module.exports = {
             data: results,
           });
         });
-      },
+      }
     );
   },
   getCustomerslist: (req, res) => {
@@ -63,8 +63,22 @@ module.exports = {
             data: results,
           });
         }
-      },
+      }
     );
+  },
+
+  findCustomers: (req, res) => {
+    const query =
+      "SELECT concat(c.Prefix,c.id) as id,c.first_name,c.last_name,c.address_line_one,c.address_line_two,c.city,c.pincode,c.mobile,c.email,c.phone,c.gstin,c.pan,s.State_Name as state FROM customers c, states s where c.state =s.id";
+
+    pool.query(query, [], (err, data) => {
+      if (err) {
+        return res.status(403).json({
+          error: err,
+        });
+      }
+      return res.status(200).json({ data: data });
+    });
   },
 
   getCustomers: (req, res) => {
@@ -104,7 +118,7 @@ module.exports = {
       requestQuery,
       query,
       primaryKey,
-      columnsMap,
+      columnsMap
     );
 
     nodeTable.output((err, data) => {
@@ -170,7 +184,7 @@ module.exports = {
           message: "balance retrieved",
           data: results,
         });
-      },
+      }
     );
   },
 
