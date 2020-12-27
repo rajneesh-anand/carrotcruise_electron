@@ -20,7 +20,6 @@
         color: rgb(3, 19, 11);
         font-weight: 600;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        width: 50px;
       }
       th {
         text-align: center !important;
@@ -147,13 +146,14 @@
                 "
               >
                 <label>BASE AMOUNT</label>
-                <label id="baseAmt"></label>
+                <label id="baseAmt" name="baseAmt"></label>
               </div>
               <div style="display: flex">
                 <label>CGST</label>
                 <input
                   type="text"
                   id="cgstRate"
+                  name="cgstRate"
                   value=""
                   placeholder="rate"
                   onkeypress="return isNumberKey(event,this);"
@@ -166,27 +166,29 @@
                 <input
                   type="text"
                   id="igstRate"
+                  name="igstRate"
                   value=""
                   placeholder="rate"
                   onkeypress="return isNumberKey(event,this);"
                   onkeyup="CalculateTotal(this);"
                 />
-                <h4 id="igstAmount"></h4>
+                <h4 id="igstAmount" name="igstAmount"></h4>
               </div>
               <div style="display: flex">
                 <h6>SGST</h6>
                 <input
                   type="text"
                   id="sgstRate"
+                  name="sgstRate"
                   value=""
                   placeholder="rate"
                   onkeypress="return isNumberKey(event,this);"
                   onkeyup="CalculateTotal(this);"
                 />
-                <h4 id="sgstAmount"></h4>
+                <h4 id="sgstAmount" name="sgstAmount"></h4>
               </div>
               <div>
-                <h4 id="totalAmount"></h4>
+                <h4 id="totalAmount" name="totalAmount"></h4>
               </div>
             </div>
           </div>

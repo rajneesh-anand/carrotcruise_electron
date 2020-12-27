@@ -1,7 +1,12 @@
 const pool = require("../config/database");
 const NodeTable = require("../services/nodetable");
 
-const { create, update, updateInsert } = require("../services/invoices");
+const {
+  create,
+  update,
+  updateInsert,
+  createItemInvoice,
+} = require("../services/invoices");
 
 module.exports = {
   getInvoiceNumber: (req, res) => {
@@ -57,13 +62,41 @@ module.exports = {
 
   insertInvoiceItems: (req, res) => {
     const body = req.body;
+
     console.log(body);
-    var sql =
-      "INSERT INTO invoice_items (particulars, quantity, rate, amount,invoice_number) VALUES ?";
-    pool.query(sql, [body], (err, result) => {
-      if (err) throw err;
-      console.log("Number of records inserted: " + result.affectedRows);
-    });
+
+    let Invoice_Number = body.Invoice_Number;
+
+    pool.query(
+      "SELECT COUNT(*) AS cnt FROM invoice WHERE Invoice_Number = ? ",
+      [Invoice_Number],
+      (err, data) => {
+        if (err) {
+          return res.status(403).json({
+            error: err,
+          });
+        }
+        if (data[0].cnt > 0) {
+          return res.status(403).json({
+            message: "Invoice already exists !",
+          });
+        }
+
+        createItemInvoice(body, (err, results) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({
+              success: 0,
+              message: "Database connection error !",
+            });
+          }
+          return res.status(200).json({
+            message: "Invoice saved successfully !",
+            data: results,
+          });
+        });
+      }
+    );
   },
 
   updateInvoice: (req, res) => {

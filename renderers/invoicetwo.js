@@ -96,22 +96,22 @@ addItem.addEventListener("click", (e) => {
   }
 });
 
-const btnSave = document.getElementById("btnSave");
-btnSave.addEventListener("click", (e) => {
-  e.preventDefault();
-  console.log(table_to_array("itemTable"));
-  var invoiceItems = table_to_array("itemTable");
+// const btnSave = document.getElementById("btnSave");
+// btnSave.addEventListener("click", (e) => {
+//   e.preventDefault();
+//   console.log(table_to_array("itemTable"));
+//   var invoiceItems = table_to_array("itemTable");
 
-  axios
-    .post(`http://localhost:3000/api/invoiceitems`, invoiceItems, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => {})
-    .catch((error) => {});
-});
+//   axios
+//     .post(`http://localhost:3000/api/invoiceitems`, invoiceItems, {
+//       headers: {
+//         Accept: "application/json",
+//         "Content-Type": "application/json",
+//       },
+//     })
+//     .then((response) => {})
+//     .catch((error) => {});
+// });
 
 function addRow() {
   var empTab = document.getElementById("itemTable");
@@ -243,7 +243,11 @@ function GetTotal(rowNum) {
   empTab.rows[rowNum].cells[3].innerHTML = amount;
 
   for (var i = 1; i < empTab.rows.length; i++) {
-    netTotal = netTotal + parseFloat(empTab.rows[i].cells[3].innerHTML);
+    let cellValue =
+      empTab.rows[i].cells[3].innerHTML === ""
+        ? 0
+        : empTab.rows[i].cells[3].innerHTML;
+    netTotal = netTotal + parseFloat(cellValue);
   }
   document.getElementById("baseAmt").innerText = netTotal.toFixed(2);
 
@@ -354,3 +358,65 @@ function CalculateTotal(obj) {
   document.getElementById("sgstAmount").innerText = sgstAmount;
   document.getElementById("totalAmount").innerText = Total.toFixed(2);
 }
+
+function formattedDate(dateValue) {
+  const event = new Date(dateValue);
+  const year = event.getFullYear();
+  const month = event.getMonth() + 1;
+  const getdate = event.getDate();
+  return `${year}-${month}-${getdate}`;
+}
+
+var form = document.querySelector("form");
+
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  let baseAmt = document.getElementById("baseAmt").innerText;
+  let cgstAmt = document.getElementById("cgstAmount").innerText;
+  let sgstAmt = document.getElementById("sgstAmount").innerText;
+  let igstAmt = document.getElementById("igstAmount").innerText;
+  let totalAmt = document.getElementById("totalAmount").innerText;
+  let totalgst =
+    parseFloat(cgstAmt) + parseFloat(sgstAmt) + parseFloat(igstAmt);
+
+  let data = new FormData(form);
+
+  let invoiceData = {
+    InvoiceItems: table_to_array("itemTable"),
+    Invoice_Number: data.get("invoice_no"),
+    Invoice_Date: formattedDate(data.get("invoice_date")),
+    Agent_Name: data.get("agent"),
+    Base_Amount: baseAmt,
+    Cgst_Rate: data.get("cgstRate") === "" ? 0 : data.get("cgstRate"),
+    Sgst_Rate: data.get("sgstRate") === "" ? 0 : data.get("sgstRate"),
+    Igst_Rate: data.get("igstRate") === "" ? 0 : data.get("igstRate"),
+    Cgst_Amount: cgstAmt,
+    Sgst_Amount: sgstAmt,
+    Igst_Amount: igstAmt,
+    TotalGst_Amount: totalgst.toFixed(2),
+    Total_Amount: totalAmt,
+    Credit_Account: "ACC1",
+    Credit_Amount: totalAmt,
+    Debit_Account: data.get("agent"),
+    Debit_Amount: totalAmt,
+    EntryType: "Invoice",
+    InvoiceNumber: data.get("invoice_no"),
+    Comments: "INVOICE",
+  };
+  console.log(invoiceData);
+
+  axios
+    .post(`http://localhost:3000/api/invoiceitems`, invoiceData, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      alert(response.data.message);
+    })
+    .catch((error) => {
+      alert(error.response.data.message);
+    });
+});

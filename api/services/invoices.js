@@ -70,7 +70,47 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results);
-      },
+      }
+    );
+  },
+  createItemInvoice: (data, callback) => {
+    const sql = `INSERT INTO invoice(Invoice_Number,Invoice_Date,Customer_Id,Base_Amount,CGST_Rate,SGST_Rate,IGST_Rate,CGST_Amount,SGST_Amount,IGST_Amount,TOTAL_GST_Amount,TOTAL_Amount)     
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?);    
+      INSERT INTO payments(EntryDate,Credit_Account,Credit_Amount,Debit_Account,Debit_Amount,EntryType,Invoice_Number,Comments)
+      VALUES(?,?,?,?,?,?,?,?);
+      INSERT INTO invoice_items (particulars, quantity, rate, amount, invoice_number) VALUES ?`;
+
+    pool.query(
+      sql,
+      [
+        data.Invoice_Number,
+        data.Invoice_Date,
+        data.Agent_Name,
+        data.Base_Amount,
+        data.Cgst_Rate,
+        data.Sgst_Rate,
+        data.Igst_Rate,
+        data.Cgst_Amount,
+        data.Sgst_Amount,
+        data.Igst_Amount,
+        data.TotalGst_Amount,
+        data.Total_Amount,
+        data.Invoice_Date,
+        data.Credit_Account,
+        data.Credit_Amount,
+        data.Debit_Account,
+        data.Debit_Amount,
+        data.EntryType,
+        data.InvoiceNumber,
+        data.Comments,
+        data.InvoiceItems,
+      ],
+      (error, results, fields) => {
+        if (error) {
+          callback(error);
+        }
+        return callback(null, results);
+      }
     );
   },
 
@@ -141,7 +181,7 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results);
-      },
+      }
     );
   },
   updateInsert: (data, callBack) => {
@@ -211,7 +251,7 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results);
-      },
+      }
     );
   },
   getUserByUserEmail: (email, callBack) => {
@@ -223,7 +263,7 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results[0]);
-      },
+      }
     );
   },
   fetchCustomerById: (id, callBack) => {
@@ -235,7 +275,7 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results[0]);
-      },
+      }
     );
   },
   fetchCustomers: (callBack) => {
@@ -267,7 +307,7 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results[0]);
-      },
+      }
     );
   },
   deleteUser: (data, callBack) => {
@@ -279,7 +319,7 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results[0]);
-      },
+      }
     );
   },
 };
