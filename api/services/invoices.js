@@ -74,11 +74,10 @@ module.exports = {
     );
   },
   createItemInvoice: (data, callback) => {
-    const sql = `INSERT INTO invoice(Invoice_Number,Invoice_Date,Customer_Id,Base_Amount,CGST_Rate,SGST_Rate,IGST_Rate,CGST_Amount,SGST_Amount,IGST_Amount,TOTAL_GST_Amount,TOTAL_Amount)     
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?);    
+    const sql = `INSERT INTO invoice(Invoice_Number,Invoice_Date,Customer_Id,Base_Amount,CGST_Rate,SGST_Rate,IGST_Rate,CGST_Amount,SGST_Amount,IGST_Amount,TOTAL_GST_Amount,TOTAL_Amount,Invoice_Items)     
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);    
       INSERT INTO payments(EntryDate,Credit_Account,Credit_Amount,Debit_Account,Debit_Amount,EntryType,Invoice_Number,Comments)
-      VALUES(?,?,?,?,?,?,?,?);
-      INSERT INTO invoice_items (particulars, quantity, rate, amount, invoice_number) VALUES ?`;
+      VALUES(?,?,?,?,?,?,?,?)`;
 
     pool.query(
       sql,
@@ -95,6 +94,7 @@ module.exports = {
         data.Igst_Amount,
         data.TotalGst_Amount,
         data.Total_Amount,
+        data.InvoiceItems,
         data.Invoice_Date,
         data.Credit_Account,
         data.Credit_Amount,
@@ -103,7 +103,6 @@ module.exports = {
         data.EntryType,
         data.InvoiceNumber,
         data.Comments,
-        data.InvoiceItems,
       ],
       (error, results, fields) => {
         if (error) {

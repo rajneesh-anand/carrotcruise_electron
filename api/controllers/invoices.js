@@ -175,7 +175,7 @@ module.exports = {
 
   findInvoiceRecords: (req, res) => {
     const query =
-      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,i.Total_Payable_Amt,c.first_name as Agent_Name FROM customers c, invoices i where i.Agent_Name =concat(c.Prefix,c.id)";
+      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,c.first_name as Agent_Name FROM customers c, invoice i where i.Customer_Id =concat(c.Prefix,c.id)";
     pool.query(query, [], (err, data) => {
       if (err) {
         return res.status(403).json({
@@ -190,7 +190,7 @@ module.exports = {
     const requestQuery = req.query;
     // Custome SQL query
     const query =
-      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,i.Total_Payable_Amt,c.first_name as Agent_Name FROM customers c, invoices i where i.Agent_Name =concat(c.Prefix,c.id)";
+      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,i.Base_Amount, i.TOTAL_GST_Amount,i.TOTAL_Amount,c.first_name as Agent_Name FROM customers c, invoice i where i.Customer_Id =concat(c.Prefix,c.id)";
 
     // Get the query string paramters sent by Datatable
 
@@ -212,8 +212,16 @@ module.exports = {
         dt: 3,
       },
       {
-        db: "Total_Payable_Amt",
+        db: "Base_Amount",
         dt: 4,
+      },
+      {
+        db: "TOTAL_GST_Amount",
+        dt: 5,
+      },
+      {
+        db: "TOTAL_Amount",
+        dt: 6,
       },
     ];
 
@@ -253,7 +261,7 @@ module.exports = {
     const invoiceId = req.params.id;
 
     pool.query(
-      `SELECT * from invoices where Invoice_Number=?`,
+      `SELECT * from invoice where Invoice_Number=?`,
       [invoiceId],
       (error, results, fields) => {
         if (error) {

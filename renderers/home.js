@@ -90,6 +90,7 @@ const texts = remote.getGlobal("sharedObject").someProperty;
 
 async function ifInvoiceExits() {
   let { data } = await axios.get(`http://localhost:3000/api/getinvoices`);
+
   return data.data.length;
 }
 
@@ -397,7 +398,9 @@ function generateInvoiceDataTable() {
 			<th>INVOICE NO.</th>
 			<th>INVOICE DATE</th>
 			<th>AGENT NAME</th>
-			<th>BILL AMOUNT</th>	   
+      <th>AMOUNT</th>
+			<th>GST AMOUNT</th>	   
+      <th>NET AMOUNT</th>	   
 		</tr>
 	</thead> 
 	</table>

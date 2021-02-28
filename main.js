@@ -613,7 +613,7 @@ ipcMain.on("create:invoiceWindow", (event, fileName) => {
 
   let win = new BrowserWindow({
     resizable: false,
-    height: 728,
+    height: 700,
     width: width - 266,
     frame: false,
     title: "Add Invoice",
@@ -647,6 +647,7 @@ ipcMain.on("create:invoiceWindow", (event, fileName) => {
 //----------nvoice Edit------------
 
 const fetchInvoiceDataByID = async (id) => {
+  console.log(id);
   return await axios
     .get(`http://localhost:3000/api/invoice/${id}`)
     .then((response) => {
@@ -661,12 +662,12 @@ ipcMain.on("invoice:edit", (event, args) => {
   // console.log(args);
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   const modalPath = path.join(
-    `file://${__dirname}/renderers/invoice_edit.html`
+    `file://${__dirname}/renderers/invoicetwo_edit.html`
   );
 
   let inveditWin = new BrowserWindow({
     resizable: false,
-    height: 728,
+    height: 700,
     width: width - 66,
     frame: false,
     title: "Edit Invoice",
@@ -678,7 +679,7 @@ ipcMain.on("invoice:edit", (event, args) => {
     },
   });
 
-  // inveditWin.webContents.openDevTools();
+  inveditWin.webContents.openDevTools();
 
   inveditWin.loadURL(modalPath);
 

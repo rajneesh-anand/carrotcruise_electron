@@ -64,3 +64,14 @@ Uncaught error: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are
     at Query._callback (E:\Electron_Workspace\hemsu\node_modules\mysql\lib\Connection.js:488:16)
     at Query.Sequence.end (E:\Electron_Workspace\hemsu\node_modules\mysql\lib\protocol\sequences\Sequence.js:83:24)
     at Query.ErrorPacket (E:\Electron_Workspace\hemsu\node_modules\mysql\lib\protocol\sequences\Query.js:92:8)
+Uncaught error: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (_http_outgoing.js:526:11)
+    at ServerResponse.header (E:\Electron_Workspace\hemsu\node_modules\express\lib\response.js:771:10)
+    at ServerResponse.send (E:\Electron_Workspace\hemsu\node_modules\express\lib\response.js:170:12)
+    at ServerResponse.json (E:\Electron_Workspace\hemsu\node_modules\express\lib\response.js:267:15)
+    at E:\Electron_Workspace\hemsu\api\controllers\invoices.js:93:34
+    at Query.<anonymous> (E:\Electron_Workspace\hemsu\api\services\invoices.js:111:16)
+    at Query.<anonymous> (E:\Electron_Workspace\hemsu\node_modules\mysql\lib\Connection.js:526:10)
+    at Query._callback (E:\Electron_Workspace\hemsu\node_modules\mysql\lib\Connection.js:488:16)
+    at Query.Sequence.end (E:\Electron_Workspace\hemsu\node_modules\mysql\lib\protocol\sequences\Sequence.js:83:24)
+    at Query.ErrorPacket (E:\Electron_Workspace\hemsu\node_modules\mysql\lib\protocol\sequences\Query.js:92:8)

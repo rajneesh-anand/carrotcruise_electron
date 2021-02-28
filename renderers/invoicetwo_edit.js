@@ -20,7 +20,6 @@ $(document).ready(function () {
     format: "dd mmm yyyy",
     setDefaultDate: true,
   });
-  addRow();
 });
 
 function formattedDate(dateValue) {
@@ -30,18 +29,6 @@ function formattedDate(dateValue) {
   const getdate = event.getDate();
   return `${year}-${month}-${getdate}`;
 }
-
-ipcRenderer.on("fetchCustomers", (event, data) => {
-  customers = [...data];
-  var Options = "";
-  data.map(function (element, i) {
-    Options =
-      Options + `<option value='${element.id}'>${element.first_name}</option>`;
-  });
-
-  $(".agentName").append(Options);
-  $(".agentName").formSelect();
-});
 
 function ValidateNumbers(e) {
   document.oncontextmenu = function () {
@@ -64,52 +51,20 @@ function isNumberKey(evt, obj) {
   return true;
 }
 
-ipcRenderer.on("sendInvoiceNumber", (event, args) => {
-  let date = new Date();
-
-  let extractInvoice = args[0];
-
-  let generatedInvoice = extractInvoice["@Invoice_Number"]
-    ? extractInvoice["@Invoice_Number"]
-    : `CC${date.getFullYear()}${date.getMonth() + 1}-00001`;
-
-  document.getElementById("invoice_no").value = generatedInvoice;
-});
-
 const addItem = document.getElementById("btnInsertNewRow");
 addItem.addEventListener("click", (e) => {
   e.preventDefault();
   var empTab = document.getElementById("itemTable");
   var rowCnt = empTab.rows.length;
-
   var qty = empTab.rows[rowCnt - 1].cells[1].children[0].value;
   var rate = empTab.rows[rowCnt - 1].cells[2].children[0].value;
   var total = empTab.rows[rowCnt - 1].cells[3].innerText;
-  console.log(total);
-
   if (total === "" || total == 0) {
     return;
   }
 
   addRow();
 });
-
-// const btnSave = document.getElementById("btnSave");
-// btnSave.addEventListener("click", (e) => {
-//   e.preventDefault();
-//   console.log(table_to_array("itemTable"));
-//   var invoiceItems = table_to_array("itemTable");
-
-//   axios
-//     .post(`http://localhost:3000/api/invoiceitems`, invoiceItems, {
-//       headers: {
-//         Accept: "application/json",
-//         "Content-Type": "application/json",
-//       },
-//     })
-//     .then((response) => {})
-//     .catch((error) => {});
-// });
 
 function addRow() {
   var empTab = document.getElementById("itemTable");
@@ -280,26 +235,6 @@ function GetTotal() {
   document.getElementById("totalAmount").innerText = Total.toFixed(2);
 }
 
-// function table_to_array(table_id) {
-//   myData = document.getElementById(table_id).rows;
-
-//   my_list = [];
-
-//   for (var i = 1; i < myData.length; i++) {
-//     el = myData[i].children;
-//     my_el = [];
-//     for (var j = 0; j < el.length; j++) {
-//       if (j == 4) {
-//         my_el.push("CC2020-12348");
-//       } else {
-//         my_el.push(el[j].innerText);
-//       }
-//     }
-//     my_list.push(my_el);
-//   }
-//   return my_list;
-// }
-
 function table_to_array(table_id) {
   var my_list = [];
   const myData = document.getElementById(table_id).rows;
@@ -448,3 +383,116 @@ form.addEventListener("submit", function (event) {
       alert(error.response.data.message);
     });
 });
+
+function dateddmmmyyyy(args) {
+  let event = new Date(`${args}`);
+  let month = event.getMonth();
+  let date = event.getDate();
+  let year = event.getFullYear();
+
+  switch (month) {
+    case 0:
+      month = "Jan";
+      break;
+    case 1:
+      month = "Feb";
+      break;
+    case 2:
+      month = "Mar";
+      break;
+    case 3:
+      month = "Apr";
+      break;
+    case 4:
+      month = "May";
+      break;
+    case 5:
+      month = "Jun";
+      break;
+    case 6:
+      month = "Jul";
+      break;
+
+    case 7:
+      month = "Aug";
+      break;
+    case 8:
+      month = "Sep";
+      break;
+    case 9:
+      month = "Oct";
+      break;
+    case 10:
+      month = "Nov";
+      break;
+    case 11:
+      month = "Dec";
+      break;
+  }
+
+  return `${date} ${month} ${year}`;
+}
+
+ipcRenderer.on("fetchCustomers", (event, data) => {
+  customers = [...data];
+  var Options = "";
+  data.map(function (element, i) {
+    Options =
+      Options + `<option value='${element.id}'>${element.first_name}</option>`;
+  });
+
+  $(".agentName").append(Options);
+  $(".agentName").formSelect();
+});
+
+ipcRenderer.on("sendInvoiceDataForEdit", (event, args) => {
+  console.log(args[0]);
+  setInvoiceData(args[0]);
+});
+
+function setInvoiceData(data) {
+  document.getElementById("invoice_no").value = data.Invoice_Number;
+  document.getElementById("invoice_date").value = dateddmmmyyyy(
+    data.Invoice_Date
+  );
+  document.getElementById("agentName").value = data.Customer_Id;
+  document.getElementById("baseAmt").innerHTML = data.Base_Amount.toFixed(2);
+  document.getElementById("igstRate").value = data.IGST_Rate;
+  document.getElementById("cgstRate").value = data.CGST_Rate;
+  document.getElementById("sgstRate").value = data.SGST_Rate;
+  document.getElementById("igstAmount").innerHTML = data.IGST_Amount.toFixed(2);
+  document.getElementById("cgstAmount").innerHTML = data.CGST_Amount.toFixed(2);
+  document.getElementById("sgstAmount").innerHTML = data.SGST_Amount.toFixed(2);
+  document.getElementById("totalAmount").innerHTML = data.TOTAL_Amount.toFixed(
+    2
+  );
+
+  const rowItems = JSON.parse(data.Invoice_Items);
+  append_json(rowItems);
+}
+
+function append_json(data) {
+  var table = document.getElementById("itemTable");
+  data.forEach(function (object) {
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      "<td>" +
+      `<select class="browser-default"><option value="volvocar">Volvofgdfhrytryfghgf</option></select>` +
+      "</td>" +
+      "<td>" +
+      `<input type=text value=${object.rQnty} onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
+      "</td>" +
+      "<td>" +
+      `<input type=text value=${object.rRate} onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
+      "</td>" +
+      "<td>" +
+      object.rTotal +
+      "</td>" +
+      "<td>" +
+      "<button onclick=removeRow(this)>" +
+      "X" +
+      "</button>" +
+      "</td>";
+    table.appendChild(tr);
+  });
+}

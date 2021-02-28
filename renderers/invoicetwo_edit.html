@@ -8,6 +8,7 @@
     />
     <!--Import materialize.css-->
     <link rel="stylesheet" href="../assets/css/materialize.min.css" />
+
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
@@ -67,7 +68,7 @@
       class="row"
       style="display: flex; padding-left: 1rem; padding-right: 1rem"
     >
-      <h6 class="flow-text teal-text text-darken-3">NEW INVOICE</h6>
+      <h6 class="flow-text teal-text text-darken-3">EDIT INVOICE</h6>
 
       <a
         class="btn-flat"
@@ -107,7 +108,11 @@
 
           <div class="col s6">
             <label>M/S NAME</label>
-            <select name="agent" class="browser-default agentName">
+            <select
+              name="agent"
+              id="agentName"
+              class="browser-default agentName"
+            >
               <option value="" disabled selected>Select Agent</option>
             </select>
           </div>
@@ -262,12 +267,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <div class="row" style="margin-bottom: 0px !important">
-          <button class="btn-small waves-effect waves-light" id="btnSave">
-            SAVE
-          </button>
-        </div> -->
       </form>
     </div>
 
@@ -286,7 +285,8 @@
       src="../assets/js/materialize.min.js"
     ></script>
 
-    <script src="./invoicetwo.js"></script>
+    <script src="./invoicetwo_edit.js"></script>
+    <script src="./invoicepdf.js"></script>
 
     <script>
       if (window.module) module = window.module;
