@@ -237,14 +237,31 @@
                   <td></td>
                 </tr>
                 <tr>
-                  <td></td>
-                  <td></td>
                   <td>
                     <button
                       class="btn-small waves-effect waves-light"
                       id="btnSave"
                     >
                       SAVE
+                    </button>
+                  </td>
+
+                  <td>
+                    <button
+                      class="btn-small waves-effect waves-light"
+                      id="btnNew"
+                      disabled
+                    >
+                      ADD NEW
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      class="btn-small waves-effect waves-light"
+                      id="btnDownload"
+                      disabled
+                    >
+                      DOWNLOAD
                     </button>
                   </td>
                 </tr>
@@ -287,6 +304,7 @@
     ></script>
 
     <script src="./invoicetwo.js"></script>
+    <script src="./invoicepdf.js"></script>
 
     <script>
       if (window.module) module = window.module;

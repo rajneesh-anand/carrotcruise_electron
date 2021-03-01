@@ -7,6 +7,62 @@ const fs = require("fs");
 const puppeteer = require("puppeteer");
 const handlebars = require("handlebars");
 
+handlebars.registerHelper("ifEqual", function (a, b, options) {
+  if (a === b) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
+
+handlebars.registerHelper("formatDate", function (dateString) {
+  let event = new Date(`${dateString}`);
+  let month = event.getMonth();
+  let date = event.getDate();
+  let year = event.getFullYear();
+
+  switch (month) {
+    case 0:
+      month = "Jan";
+      break;
+    case 1:
+      month = "Feb";
+      break;
+    case 2:
+      month = "Mar";
+      break;
+    case 3:
+      month = "Apr";
+      break;
+    case 4:
+      month = "May";
+      break;
+    case 5:
+      month = "Jun";
+      break;
+    case 6:
+      month = "Jul";
+      break;
+
+    case 7:
+      month = "Aug";
+      break;
+    case 8:
+      month = "Sep";
+      break;
+    case 9:
+      month = "Oct";
+      break;
+    case 10:
+      month = "Nov";
+      break;
+    case 11:
+      month = "Dec";
+      break;
+  }
+  return `${date} ${month} ${year}`;
+});
+
 $(document).ready(function () {
   const btnClose = document.getElementById("btnClose");
   btnClose.addEventListener("click", (event) => {
@@ -93,23 +149,6 @@ addItem.addEventListener("click", (e) => {
 
   addRow();
 });
-
-// const btnSave = document.getElementById("btnSave");
-// btnSave.addEventListener("click", (e) => {
-//   e.preventDefault();
-//   console.log(table_to_array("itemTable"));
-//   var invoiceItems = table_to_array("itemTable");
-
-//   axios
-//     .post(`http://localhost:3000/api/invoiceitems`, invoiceItems, {
-//       headers: {
-//         Accept: "application/json",
-//         "Content-Type": "application/json",
-//       },
-//     })
-//     .then((response) => {})
-//     .catch((error) => {});
-// });
 
 function addRow() {
   var empTab = document.getElementById("itemTable");
@@ -280,26 +319,6 @@ function GetTotal() {
   document.getElementById("totalAmount").innerText = Total.toFixed(2);
 }
 
-// function table_to_array(table_id) {
-//   myData = document.getElementById(table_id).rows;
-
-//   my_list = [];
-
-//   for (var i = 1; i < myData.length; i++) {
-//     el = myData[i].children;
-//     my_el = [];
-//     for (var j = 0; j < el.length; j++) {
-//       if (j == 4) {
-//         my_el.push("CC2020-12348");
-//       } else {
-//         my_el.push(el[j].innerText);
-//       }
-//     }
-//     my_list.push(my_el);
-//   }
-//   return my_list;
-// }
-
 function table_to_array(table_id) {
   var my_list = [];
   const myData = document.getElementById(table_id).rows;
@@ -319,7 +338,7 @@ function table_to_array(table_id) {
         itemName: itemName,
         rQnty: rQnty,
         rRate: rRate,
-        rTotal: rTotal,
+        rTotal: parseFloat(rTotal).toFixed(2),
       };
       my_list.push(rowItem);
     }
@@ -334,7 +353,7 @@ function table_to_array(table_id) {
         itemName: itemName,
         rQnty: rQnty,
         rRate: rRate,
-        rTotal: rTotal,
+        rTotal: parseFloat(rTotal).toFixed(2),
       };
       my_list.push(rowItem);
     }
@@ -395,6 +414,37 @@ function formattedDate(dateValue) {
   return `${year}-${month}-${getdate}`;
 }
 
+const getInvoiceNumber = async () => {
+  return await axios
+    .get(`http://localhost:3000/api/getinvoice`)
+    .then((response) => {
+      return response.data.data;
+    })
+    .catch((error) => {
+      if (error) throw new Error(error);
+    });
+};
+
+document.getElementById("btnDownload").addEventListener("click", (event) => {
+  event.preventDefault();
+  fs.access("C://PDF_REPORTS", function (error) {
+    if (error) {
+      // console.log("Directory does not exist.");
+      fs.mkdirSync("C://PDF_REPORTS");
+    }
+  });
+  const InvoiceNumber = document.getElementById("invoice_no").value;
+  printInvoicePdf(InvoiceNumber);
+});
+
+document.getElementById("btnNew").addEventListener("click", (event) => {
+  event.preventDefault();
+  getInvoiceNumber().then((data) => {
+    let inv = data[0];
+    document.getElementById("invoice_no").value = inv["@Invoice_Number"];
+  });
+});
+
 var form = document.querySelector("form");
 
 form.addEventListener("submit", function (event) {
@@ -443,6 +493,9 @@ form.addEventListener("submit", function (event) {
     })
     .then((response) => {
       alert(response.data.message);
+      $("#btnSave").prop("disabled", true);
+      $("#btnDownload").prop("disabled", false);
+      $("#btnNew").prop("disabled", false);
     })
     .catch((error) => {
       alert(error.response.data.message);

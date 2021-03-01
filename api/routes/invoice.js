@@ -8,11 +8,14 @@ const {
   getInvoiceByID,
   findInvoiceRecords,
   insertInvoiceItems,
+  updateInvoiceItems,
 } = require("../controllers/invoices");
 // router.get("/invoices", getInvoices);
 router.post("/invoice", createInvoice);
-router.post("/invoiceitems", insertInvoiceItems);
 router.put("/invoice", updateInvoice);
+router.post("/invoiceitems", insertInvoiceItems);
+router.put("/invoiceitems", updateInvoiceItems);
+
 router.get("/getinvoice", getInvoiceNumber);
 router.get("/getinvoices", findInvoiceRecords);
 router.get("/invoice/:id", getInvoiceByID);

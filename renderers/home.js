@@ -432,6 +432,24 @@ function generateInvoiceDataTable() {
         },
         targets: 2,
       },
+      {
+        render: function (data, type, row) {
+          return data.toFixed(2);
+        },
+        targets: 4,
+      },
+      {
+        render: function (data, type, row) {
+          return data.toFixed(2);
+        },
+        targets: 5,
+      },
+      {
+        render: function (data, type, row) {
+          return data.toFixed(2);
+        },
+        targets: 6,
+      },
     ],
 
     dom: "Bfrtip",

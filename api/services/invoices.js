@@ -113,6 +113,45 @@ module.exports = {
     );
   },
 
+  updateInvoice: (data, callBack) => {
+    const updateIntoInvoiceAndAccounts = `update invoice set Invoice_Date=?, Customer_Id=?,Base_Amount=?,IGST_Rate=?, CGST_Rate=?,SGST_Rate=?, IGST_Amount=?,CGST_Amount=?,SGST_Amount=?,
+    TOTAl_GST_Amount=?,TOTAL_Amount=?,Invoice_Items=? where Invoice_Number=?;             
+           update payments set EntryDate=?,Credit_Account=?,Credit_Amount=?,Debit_Account=?,Debit_Amount=?,Comments=? where Invoice_Number =? and EntryType=?`;
+    console.log(updateIntoInvoiceAndAccounts);
+    pool.query(
+      updateIntoInvoiceAndAccounts,
+      [
+        data.Invoice_Date,
+        data.Agent_Name,
+        data.Base_Amount,
+        data.Igst_Rate,
+        data.Cgst_Rate,
+        data.Sgst_Rate,
+        data.Igst_Amount,
+        data.Cgst_Amount,
+        data.Sgst_Amount,
+        data.TotalGst_Amount,
+        data.Total_Amount,
+        data.InvoiceItems,
+        data.Invoice_Number,
+        data.Invoice_Date,
+        data.Credit_Account,
+        data.Credit_Amount,
+        data.Debit_Account,
+        data.Debit_Amount,
+        data.Comments,
+        data.InvoiceNumber,
+        data.EntryType,
+      ],
+      (error, results, fields) => {
+        if (error) {
+          callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
+  },
+
   update: (data, callBack) => {
     const updateIntoInvoiceAndAccounts = `update invoices set Invoice_Type=?,Invoice_Date=?, Departure_Date=?, Agent_Name=?, Cruise_Ship=?, Cruise=?, Currency=?, Booking=?, Cabin=?, Cat_Bkg=?, Pass_Name=?, Nationality=?, Adults=?, Children=?, Infants=?, Adults_Rate=?, Children_Rate=?, Infants_Rate=?, 
             Comm_Rate=?, Comm_Amt=?, NCF=?, NCF_Amt=?, TAX=?,TAX_Amt=?,Grat=?,Grat_Amt=?,HS=?,HS_Amt=?,Misc=?,TDS=?,TDS_Amt=?,Token_Amt=?,Token_Amt_INR=?,CGST=?,IGST=?,SGST=?,GST_Amt=?,ROE=?, Base_Amt=?,Total_Payable_Amt=?,Total_Payable_Amt_INR=?,Token=?,GST=?,PAX=? where Invoice_Number=?;             

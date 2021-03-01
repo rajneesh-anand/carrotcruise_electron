@@ -6,6 +6,7 @@ const {
   update,
   updateInsert,
   createItemInvoice,
+  updateInvoice,
 } = require("../services/invoices");
 
 module.exports = {
@@ -62,9 +63,6 @@ module.exports = {
 
   insertInvoiceItems: (req, res) => {
     const body = req.body;
-
-    console.log(body);
-
     let Invoice_Number = body.Invoice_Number;
 
     pool.query(
@@ -97,6 +95,23 @@ module.exports = {
         });
       }
     );
+  },
+  updateInvoiceItems: (req, res) => {
+    const body = req.body;
+    console.log(body);
+
+    updateInvoice(body, (err, results) => {
+      if (err) {
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection error !",
+        });
+      }
+      return res.status(200).json({
+        message: "Invoice updated successfully !",
+        data: results,
+      });
+    });
   },
 
   updateInvoice: (req, res) => {
