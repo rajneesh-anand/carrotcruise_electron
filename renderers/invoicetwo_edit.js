@@ -54,67 +54,39 @@ function isNumberKey(evt, obj) {
 const addItem = document.getElementById("btnInsertNewRow");
 addItem.addEventListener("click", (e) => {
   e.preventDefault();
-  var empTab = document.getElementById("itemTable");
-  var rowCnt = empTab.rows.length;
-  var qty = empTab.rows[rowCnt - 1].cells[1].children[0].value;
-  var rate = empTab.rows[rowCnt - 1].cells[2].children[0].value;
-  var total = empTab.rows[rowCnt - 1].cells[3].innerText;
+  let table = document.getElementById("itemTable");
+  let rowCnt = table.rows.length;
+  let total = table.rows[rowCnt - 1].cells[3].innerText;
   if (total === "" || total == 0) {
     return;
   }
-
   addRow();
 });
 
 function addRow() {
-  var empTab = document.getElementById("itemTable");
-  var rowCnt = empTab.rows.length; // get the number of rows.
-  var tr = empTab.insertRow(rowCnt); // table row.
-  //   tr = empTab.insertRow(rowCnt);
-
-  for (var c = 0; c < 5; c++) {
-    var td = document.createElement("td"); // TABLE DEFINITION.
-    td = tr.insertCell(c);
-
-    if (c == 4) {
-      // if its the first column of the table.
-      // add a button control.
-      var button = document.createElement("input");
-
-      // set the attributes.
-      button.setAttribute("type", "button");
-      button.setAttribute("value", "X");
-
-      // add button's "onclick" event.
-      button.setAttribute("onclick", "removeRow(this)");
-      td.appendChild(button);
-    } else if (c == 0) {
-      var ele = document.createElement("SELECT");
-      // ele.setAttribute("id", `s${rowCnt}`);
-      ele.setAttribute("class", "browser-default");
-      var z = document.createElement("option");
-      ele.appendChild(z);
-      z.setAttribute("value", "volvocar");
-      var t = document.createTextNode("Volvofgdfhrytryfghgf");
-      z.appendChild(t);
-      td.appendChild(ele);
-      // document.getElementById(`s${rowCnt}`).appendChild(z);
-    } else if (c == 1) {
-      var ele = document.createElement("input");
-      ele.setAttribute("type", "text");
-      // ele.setAttribute("value", "");
-      ele.setAttribute("onkeypress", "return ValidateNumbers(event)");
-      ele.setAttribute("onkeyup", "GetTotal()");
-      td.appendChild(ele);
-    } else if (c == 2) {
-      var ele = document.createElement("input");
-      ele.setAttribute("type", "text");
-      ele.setAttribute("value", "");
-      ele.setAttribute("onkeypress", "return isNumberKey(event,this)");
-      ele.setAttribute("onkeyup", "GetTotal()");
-      td.appendChild(ele);
-    }
-  }
+  var table = document.getElementById("itemTable");
+  var tr = document.createElement("tr");
+  tr.innerHTML =
+    "<td>" +
+    `<select class="browser-default"> ${itemsNames.map(
+      (item) => `<option value=${item}>${item}</option>`
+    )}
+    </select>` +
+    "</td>" +
+    "<td>" +
+    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
+    "</td>" +
+    "<td>" +
+    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
+    "</td>" +
+    "<td>" +
+    "</td>" +
+    "<td>" +
+    "<button type=button onclick=removeRow(this)>" +
+    "X" +
+    "</button>" +
+    "</td>";
+  table.appendChild(tr);
 }
 
 // function to delete a row.
@@ -184,13 +156,13 @@ function CalculateTotal_AfterRowDelete() {
 function GetTotal() {
   var netTotal = 0;
   var tableRows = document.getElementById("itemTable").rows;
-  console.log(tableRows);
+
   for (var i = 1; i < tableRows.length; i++) {
     let el = tableRows[i].children;
     let rQnty = el[1].children[0].value === "" ? 0 : el[1].children[0].value;
     let rRate = el[2].children[0].value === "" ? 0 : el[2].children[0].value;
     let rTotal = parseFloat(rQnty) * parseFloat(rRate);
-    tableRows[i].cells[3].innerHTML = rTotal;
+    tableRows[i].cells[3].innerHTML = rTotal.toFixed(2);
     netTotal = netTotal + parseFloat(rTotal);
   }
 
@@ -246,7 +218,7 @@ function table_to_array(table_id) {
   ) {
     for (var i = 1; i < myData.length - 1; i++) {
       let el = myData[i].children;
-      let itemName = el[0].innerText;
+      let itemName = myData[i].children[0].childNodes[0].value;
       let rQnty = el[1].children[0].value;
       let rRate = el[2].children[0].value;
       let rTotal = el[3].innerText;
@@ -254,14 +226,15 @@ function table_to_array(table_id) {
         itemName: itemName,
         rQnty: rQnty,
         rRate: rRate,
-        rTotal: rTotal,
+        rTotal: parseFloat(rTotal).toFixed(2),
       };
       my_list.push(rowItem);
     }
   } else {
     for (var i = 1; i < myData.length; i++) {
       let el = myData[i].children;
-      let itemName = el[0].innerText;
+      // let itemName = el[0].innerText;
+      let itemName = myData[i].children[0].childNodes[0].value;
       let rQnty = el[1].children[0].value;
       let rRate = el[2].children[0].value;
       let rTotal = el[3].innerText;
@@ -269,7 +242,7 @@ function table_to_array(table_id) {
         itemName: itemName,
         rQnty: rQnty,
         rRate: rRate,
-        rTotal: rTotal,
+        rTotal: parseFloat(rTotal).toFixed(2),
       };
       my_list.push(rowItem);
     }
@@ -451,7 +424,6 @@ ipcRenderer.on("sendInvoiceDataForEdit", (event, args) => {
 });
 
 function setInvoiceData(data) {
-  console.log(data);
   document.getElementById("invoice_no").value = data.Invoice_Number;
   document.getElementById("invoice_date").value = dateddmmmyyyy(
     data.Invoice_Date
@@ -472,13 +444,16 @@ function setInvoiceData(data) {
   append_json(rowItems);
 }
 
+const itemsNames = ["Car", "Bike", "volvocar"];
+
 function append_json(data) {
+  console.log(data);
   var table = document.getElementById("itemTable");
   data.forEach(function (object) {
     var tr = document.createElement("tr");
     tr.innerHTML =
       "<td>" +
-      `<select class="browser-default"><option value="volvocar">Volvofgdfhrytryfghgf</option></select>` +
+      `<select class="browser-default"> <option value=${object.itemName}>${object.itemName}</option></select>` +
       "</td>" +
       "<td>" +
       `<input type=text value=${object.rQnty} onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +

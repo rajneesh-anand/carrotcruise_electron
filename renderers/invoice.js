@@ -324,8 +324,6 @@ function GetTotal(obj) {
 }
 
 $(document).ready(function () {
-  //-- closing form
-
   const btnClose = document.getElementById("btnClose");
   btnClose.addEventListener("click", (event) => {
     const window = remote.getCurrentWindow();
@@ -478,10 +476,7 @@ ipcRenderer.on("fetchCustomers", (event, data) => {
 
 ipcRenderer.on("sendInvoiceNumber", (event, args) => {
   let date = new Date();
-  // console.log(`CC${date.getFullYear()}${date.getMonth() + 1}-00001`);
-
   let extractInvoice = args[0];
-
   let generatedInvoice = extractInvoice["@Invoice_Number"]
     ? extractInvoice["@Invoice_Number"]
     : `CC${date.getFullYear()}${date.getMonth() + 1}-00001`;

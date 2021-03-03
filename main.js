@@ -606,7 +606,6 @@ ipcMain.on("create:tdsReportWindow", (event, fileName) => {
 
 ipcMain.on("create:invoiceWindow", (event, fileName) => {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-  //  console.log(height);
   const modalPath = path.join(
     `file://${__dirname}/renderers/` + fileName + `.html`
   );
@@ -614,7 +613,7 @@ ipcMain.on("create:invoiceWindow", (event, fileName) => {
   let win = new BrowserWindow({
     resizable: false,
     height: 700,
-    width: width - 266,
+    width: width - 66,
     frame: false,
     title: "Add Invoice",
     parent: mainWindow,

@@ -117,15 +117,17 @@ function getAccountBalance() {
       console.log(Balance);
 
       if (Balance > 0) {
-        balanceField.innerText = `Balance : INR { ${thFormat(
-          Balance,
-        )} } Credit `;
+        balanceField.innerText = `Balance :  ${String.fromCharCode(
+          0x20b9
+        )} ${thFormat(Balance)} Cr `;
       } else if (Balance < 0) {
-        balanceField.innerText = `Balance : INR { ${thFormat(
-          Math.abs(Balance),
-        )} } Debit `;
+        balanceField.innerText = `Balance :  ${String.fromCharCode(
+          0x20b9
+        )} ${thFormat(Math.abs(Balance))} Dr `;
       } else {
-        balanceField.innerText = `Balance : INR { 0.00 }`;
+        balanceField.innerText = `Balance :  ${String.fromCharCode(
+          0x20b9
+        )}  0.00 `;
       }
     })
     .catch((error) => {
