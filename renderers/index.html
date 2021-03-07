@@ -2,22 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
     <title>CRUISE CARROT</title>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap"
       rel="stylesheet"
     />
-
     <link rel="stylesheet" href="../assets/css/materialize.min.css" />
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
     <link rel="stylesheet" href="../assets/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="../assets/css/buttons.dataTables.min.css" />
     <link rel="stylesheet" href="../assets/css/select.dataTables.min.css" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
   </head>
   <body>
     <header class="navbar-fixed">
@@ -97,6 +92,20 @@
               <ul>
                 <li id="newSupplier"><a href="#">Add Supplier</a></li>
                 <li id="supList"><a href="#">Supplier List</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="no-padding">
+            <a class="collapsible-header waves-effect waves-grey"
+              ><i class="large material-icons">apps</i>ITEM<i
+                class="nav-drop-icon material-icons"
+                >keyboard_arrow_right</i
+              ></a
+            >
+            <div class="collapsible-body">
+              <ul>
+                <li id="newItem"><a href="#">Add Item</a></li>
+                <li id="itemList"><a href="#">Item List</a></li>
               </ul>
             </div>
           </li>
@@ -185,6 +194,7 @@
                 <li id="newUser"><a href="#">New User</a></li>
                 <li id="dbbackup"><a href="#">Data Backup</a></li>
                 <li id="messenger"><a href="#">Send Message</a></li>
+                <li id="companyInfo"><a href="#">Company Info</a></li>
               </ul>
             </div>
           </li>
@@ -193,7 +203,7 @@
     </aside>
 
     <!-- RIGHT SIDEBAR	 -->
-    <ul id="sidenav-2" class="sidenav">
+    <!-- <ul id="sidenav-2" class="sidenav">
       <li><a class="subheader">Subheader</a></li>
       <li>
         <a href="https://github.com/dogfalo/materialize/" target="_blank"
@@ -211,11 +221,150 @@
         >
       </li>
     </ul>
+     -->
 
     <main id="test2" class="testPad">
-      <div class="col s12">
-        <div class="card" style="margin: 0 0 1rem 0 !important">
-          <div id="createTable" class="card-content"></div>
+      <div class="col s12" style="margin: 0 12px !important">
+        <div id="createTable" style="margin-top: 8px"></div>
+        <div id="companyDetails" style="display: none">
+          <form method="post" class="col s12" enctype="multipart/form-data">
+            <div class="row">
+              <div class="input-field col s6">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  class="validate"
+                  required
+                />
+                <label for="name">Company Name</label>
+              </div>
+
+              <div class="file-field input-field col s3">
+                <div class="btn">
+                  <span>Upload Logo</span>
+                  <input
+                    type="file"
+                    multiple
+                    id="company_photo"
+                    name="company_photo"
+                  />
+                </div>
+                <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text" />
+                </div>
+              </div>
+              <div id="gallery" name="gallery" class="gallery"></div>
+
+              <div class="input-field col s3">
+                <input
+                  id="address_one"
+                  type="text"
+                  name="address_one"
+                  required
+                  class="validate"
+                />
+                <label for="address_one">Address</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s6">
+                <input
+                  id="city"
+                  type="text"
+                  name="city"
+                  required
+                  class="validate"
+                />
+                <label for="city">City</label>
+              </div>
+              <div class="input-field col s2">
+                <input
+                  id="pincode"
+                  type="text"
+                  name="pincode"
+                  required
+                  class="validate"
+                  onkeypress="return ValidateNumbers(event)"
+                />
+                <label for="pincode">Pincode</label>
+              </div>
+              <div class="col s4">
+                <label>STATE</label>
+                <select name="state" class="browser-default stateName">
+                  <option value="" disabled selected>Select State</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="input-field col s3">
+                <i class="material-icons prefix">phone</i>
+                <input
+                  id="phone"
+                  type="text"
+                  name="phone"
+                  class="validate"
+                  onkeypress="return ValidateNumbers(event)"
+                />
+                <label for="phone">Telephone</label>
+              </div>
+              <div class="input-field col s3">
+                <i class="material-icons prefix">phone_android</i>
+                <input
+                  id="mobile"
+                  name="mobile"
+                  type="tel"
+                  class="validate"
+                  onkeypress="return ValidateNumbers(event)"
+                />
+                <label for="mobile">Mobile</label>
+              </div>
+              <div class="input-field col s3">
+                <i class="material-icons prefix">edit</i>
+                <input id="pan" type="text" name="pan" class="validate" />
+                <label for="pan">PAN</label>
+              </div>
+              <div class="input-field col s3">
+                <i class="material-icons prefix">edit</i>
+                <input
+                  id="gstin"
+                  type="text"
+                  name="gstin"
+                  class="validate"
+                  required
+                />
+                <label for="gstin">GSTIN</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s6">
+                <i class="material-icons prefix">email</i>
+                <input id="email" type="email" name="email" class="validate" />
+                <label for="email">Email</label>
+              </div>
+              <div class="input-field col s6">
+                <i class="material-icons prefix">email</i>
+                <input
+                  id="website"
+                  type="text"
+                  name="website"
+                  class="validate"
+                />
+                <label for="website">Website</label>
+              </div>
+            </div>
+            <div class="right-align">
+              <button
+                class="btn-small waves-effect waves-light"
+                type="submit"
+                id="btnSave"
+                name="action"
+              >
+                SAVE
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </main>

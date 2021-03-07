@@ -84,6 +84,27 @@ handlebars.registerHelper("formatDate", function (dateString) {
   return `${date} ${month} ${year}`;
 });
 
+function ValidateNumbers(e) {
+  document.oncontextmenu = function () {
+    return false;
+  };
+  var key = document.all ? e.keyCode : e.which;
+  if (key == 8) return true;
+  patron = /\d/;
+  te = String.fromCharCode(key);
+  return patron.test(te);
+}
+
+function isNumberKey(evt, obj) {
+  var charCode = evt.which ? evt.which : event.keyCode;
+  var value = obj.value;
+  var dotcontains = value.indexOf(".") != -1;
+  if (dotcontains) if (charCode == 46) return false;
+  if (charCode == 46) return true;
+  if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+  return true;
+}
+
 const texts = remote.getGlobal("sharedObject").someProperty;
 
 // document.getElementById("abc").value = texts;
@@ -213,6 +234,8 @@ $(document).ready(function () {
     // document.getElementById("userEmail").innerText = data.email;
   });
 
+  $("#companyDetails").hide();
+
   ifInvoiceExits().then((res) => {
     if (res === 0) {
       noRecordsFound("invoice");
@@ -237,6 +260,88 @@ btnlogOut.addEventListener("click", (event) => {
   });
 });
 
+// Company Details
+
+$(function () {
+  let imagesPreview = function (input, placeToInsertImagePreview) {
+    if (input.files) {
+      var filesAmount = input.files.length;
+
+      for (i = 0; i < filesAmount; i++) {
+        var reader = new FileReader();
+
+        reader.onload = function (event) {
+          $($.parseHTML("<img>"))
+            .attr("src", event.target.result)
+            .appendTo(placeToInsertImagePreview);
+        };
+
+        reader.readAsDataURL(input.files[i]);
+      }
+    }
+  };
+
+  $("#company_photo").on("change", function () {
+    imagesPreview(this, "div.gallery");
+  });
+});
+
+const isvalid = () => {
+  let name = document.getElementById("name").value;
+  let address = document.getElementById("address_one").value;
+  let gstin = document.getElementById("gstin").value;
+  let city = document.getElementById("city").value;
+  // let pincode = document.getElementById("pincode").value;
+
+  if (name === "" || gstin === "" || city === "" || address === "") {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+// const btnSave = document.getElementById("btnSave");
+let form = document.querySelector("form");
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  console.log(isvalid());
+
+  if (isvalid()) {
+    let data = new FormData(form);
+    let companyData = {
+      prefix: "COMP",
+      name: data.get("name").toUpperCase(),
+      address_line_one: data.get("address_one").toUpperCase(),
+      city: data.get("city").toUpperCase(),
+      pincode: data.get("pincode"),
+      state: data.get("state"),
+      phone: data.get("phone"),
+      mobile: data.get("mobile"),
+      gstin: data.get("gstin").toUpperCase(),
+      email: data.get("email"),
+      pan: data.get("pan"),
+      company_logo: data.get("company_photo").path,
+    };
+    console.log(companyData);
+
+    axios
+      .post(`http://localhost:3000/api/company`, companyData, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log(response.data.message);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+});
+//
+
 const button = document.getElementById("newUser");
 button.addEventListener("click", (event) => {
   ipcRenderer.send("create:user", "user");
@@ -245,6 +350,11 @@ button.addEventListener("click", (event) => {
 const custButton = document.getElementById("newCustomer");
 custButton.addEventListener("click", (event) => {
   ipcRenderer.send("create:customerwindow", "customer");
+});
+
+const itemButton = document.getElementById("newItem");
+itemButton.addEventListener("click", (event) => {
+  ipcRenderer.send("create:itemwindow", "item");
 });
 
 const supButton = document.getElementById("newSupplier");
@@ -297,10 +407,17 @@ msgButton.addEventListener("click", (event) => {
   ipcRenderer.send("create:messengerWindow", "messenger");
 });
 
+const companyInfo = document.getElementById("companyInfo");
+companyInfo.addEventListener("click", (event) => {
+  $("#createTable").hide();
+  $("#companyDetails").show();
+});
+
 const ledgerButton = document.getElementById("ledger");
 ledgerButton.addEventListener("click", (event) => {
-  $("#invTable_wrapper").remove();
-  $("#cusTable_wrapper").remove();
+  $("#companyDetails").hide();
+  $("#createTable").show();
+  $("table").remove();
 
   getLedgerListAPICall((response) => {
     if (response === "success") {
@@ -312,9 +429,9 @@ ledgerButton.addEventListener("click", (event) => {
 
 const generalledgerButton = document.getElementById("generalledger");
 generalledgerButton.addEventListener("click", (event) => {
-  $("#invTable_wrapper").remove();
-  $("#cusTable_wrapper").remove();
-
+  $("#companyDetails").hide();
+  $("#createTable").show();
+  $("table").remove();
   getGeneralLedgerListAPICall((response) => {
     if (response === "success") {
       generateGeneralLedgerDataTable();
@@ -324,10 +441,9 @@ generalledgerButton.addEventListener("click", (event) => {
 
 const listPaymentButton = document.getElementById("listPayments");
 listPaymentButton.addEventListener("click", (event) => {
-  $("#invTable_wrapper").remove();
-  $("#cusTable_wrapper").remove();
-  $("#ledTable_wrapper").remove();
-  $("#recTable_wrapper").remove();
+  $("#companyDetails").hide();
+  $("#createTable").show();
+  $("table").remove();
 
   getPaymentListAPICall((response) => {
     if (response === "success") {
@@ -338,10 +454,9 @@ listPaymentButton.addEventListener("click", (event) => {
 
 const listReceiveButton = document.getElementById("listReceive");
 listReceiveButton.addEventListener("click", (event) => {
-  $("#invTable_wrapper").remove();
-  $("#cusTable_wrapper").remove();
-  $("#ledTable_wrapper").remove();
-  $("#payTable_wrapper").remove();
+  $("#companyDetails").hide();
+  $("#createTable").show();
+  $("table").remove();
 
   getReceiveListAPICall((response) => {
     if (response === "success") {
@@ -352,6 +467,9 @@ listReceiveButton.addEventListener("click", (event) => {
 
 const cusListButton = document.getElementById("cusList");
 cusListButton.addEventListener("click", (event) => {
+  $("#companyDetails").hide();
+  $("#createTable").show();
+  $("table").remove();
   ifCustomerExits().then((res) => {
     if (res === 0) {
       noRecordsFound("customer");
@@ -363,12 +481,25 @@ cusListButton.addEventListener("click", (event) => {
 
 const supListButton = document.getElementById("supList");
 supListButton.addEventListener("click", (event) => {
-  $("#invTable_wrapper").remove();
+  $("#companyDetails").hide();
+  $("#createTable").show();
+  $("table").remove();
   generateSupplierDataTable();
+});
+
+const itemListButton = document.getElementById("itemList");
+itemListButton.addEventListener("click", (event) => {
+  $("#companyDetails").hide();
+  $("#createTable").show();
+  $("table").remove();
+  generateItemDataTable();
 });
 
 const invListButton = document.getElementById("invList");
 invListButton.addEventListener("click", (event) => {
+  $("#companyDetails").hide();
+  $("#createTable").show();
+  $("table").remove();
   ifInvoiceExits().then((res) => {
     if (res === 0) {
       noRecordsFound("invoice");
@@ -378,6 +509,10 @@ invListButton.addEventListener("click", (event) => {
     }
   });
 });
+
+// Company Info
+
+function generateCompanyInfo() {}
 
 // No Records Found
 
@@ -810,6 +945,83 @@ function generateSupplierDataTable() {
 
     var selectedRows = $("tr.selected").length;
     $("#supTable")
+      .DataTable()
+      .button(0)
+      .enable(selectedRows === 1);
+  });
+}
+
+// Item DataTable
+
+function generateItemDataTable() {
+  let itemID;
+  const htmlTemplate = `<table id="itemTable" class=" display table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>ITEM NAME</th>
+					<th>UNIT PRICE</th>
+					<th>GST RATE</th>
+				
+				</tr>
+			</thead> 
+		</table>
+	`;
+
+  document.getElementById("createTable").innerHTML = htmlTemplate;
+
+  $("#itemTable").dataTable({
+    paging: true,
+    sort: true,
+    searching: true,
+    responsive: true,
+    processing: true,
+    serverSide: true,
+    ajax: "http://localhost:3000/api/items",
+    language: {
+      searchPlaceholder: "Search Item",
+      sSearch: "",
+      paginate: {
+        next: "&#8594;", // or '→'
+        previous: "&#8592;", // or '←'
+      },
+    },
+    info: false,
+    pageLength: 100,
+    dom: "Bfrtip",
+    select: true,
+    buttons: [
+      {
+        text: "Edit Selected Item",
+        action: function (e, dt, node, config) {
+          ipcRenderer.send("item:edit", {
+            itemID: itemID,
+          });
+        },
+
+        enabled: false,
+      },
+    ],
+  });
+
+  //------------- Table row selection condition ------
+
+  $("#itemTable tbody").on("click", "tr", function () {
+    if ($(this).hasClass("selected")) {
+      $(this).removeClass("selected");
+    } else {
+      $("#itemTable").dataTable().$("tr.selected").removeClass("selected");
+      $(this).addClass("selected");
+    }
+  });
+
+  $("#itemTable tbody").on("click", "tr", function () {
+    rowIndex = $("#itemTable").DataTable().row(this).index();
+
+    itemID = $("#itemTable").DataTable().cell(".selected", 0).data();
+
+    var selectedRows = $("tr.selected").length;
+    $("#itemTable")
       .DataTable()
       .button(0)
       .enable(selectedRows === 1);

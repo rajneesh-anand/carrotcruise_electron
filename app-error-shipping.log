@@ -1,0 +1,10 @@
+Uncaught error: TypeError: args.itemID.slice is not a function
+    at WebContents.<anonymous> (E:\Electron_Workspace\hemsu\main.js:646:35)
+    at WebContents.emit (events.js:322:22)
+    at WebContents.EventEmitter.emit (domain.js:482:12)
+    at WebContents.topLevelDomainCallback (domain.js:137:15)
+Uncaught error: TypeError: args.itemID.slice is not a function
+    at WebContents.<anonymous> (E:\Electron_Workspace\hemsu\main.js:647:35)
+    at WebContents.emit (events.js:322:22)
+    at WebContents.EventEmitter.emit (domain.js:482:12)
+    at WebContents.topLevelDomainCallback (domain.js:137:15)

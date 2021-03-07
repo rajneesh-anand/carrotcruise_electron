@@ -4,11 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../assets/fonts/material-icons.css" />
     <link rel="stylesheet" href="../assets/css/materialize.min.css" />
-    <style>
-      input {
-        text-transform: uppercase;
-      }
-    </style>
   </head>
 
   <body onkeydown="return (event.keyCode!=13)" style="width: 100%">
@@ -16,7 +11,7 @@
       class="row"
       style="display: flex; padding-left: 1rem; padding-right: 1rem"
     >
-      <h6 class="flow-text teal-text text-darken-3">NEW ACCOUNT</h6>
+      <h6 id="formName" class="flow-text teal-text text-darken-3">NEW ITEM</h6>
 
       <a
         class="btn-flat"
@@ -29,71 +24,49 @@
     <div class="row" style="margin-top: 15px">
       <form method="post" class="col s12">
         <div class="row">
-          <div class="input-field col s4">
-            <i class="material-icons prefix">date_range</i>
-            <input
-              id="payment_date"
-              type="text"
-              name="payment_date"
-              class="datepicker"
-              required
-            />
-            <label for="payment_date"> DATE</label>
-          </div>
-          <div class="col s6">
-            <label>ACCOUNT TYPE</label>
-            <select id="entryType" name="entryType" class="browser-default">
-              <option value="" disabled selected>SELECT CATEGORY --</option>
-            </select>
-          </div>
-        </div>
-        <div class="row">
           <div class="input-field col s12">
-            <i class="material-icons prefix">create</i>
+            <i class="material-icons prefix">edit</i>
             <input
-              id="account"
+              id="item_name"
               type="text"
               class="validate"
-              name="account"
+              name="item_name"
               required
             />
-            <label for="account">ACCOUNT NAME</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s12">
-            <i class="material-icons prefix">create</i>
-            <input id="comment" type="text" name="comment" class="validate" />
-            <label for="comment">REMARKS / COMMENTS</label>
+            <label for="item_name">Item Name</label>
           </div>
         </div>
 
         <div class="row">
           <div class="input-field col s6">
-            <i class="material-icons prefix">create</i>
+            <i class="material-icons prefix">edit</i>
             <input
-              id="amount"
-              name="amount"
+              id="rate"
               type="text"
+              name="rate"
               class="validate"
               required
               onkeypress="return isNumberKey(event,this);"
             />
-            <label for="amount">OPENING BALANCE</label>
+            <label for="rate">UNIT PRICE</label>
           </div>
+
           <div class="col s6">
-            <label>BALANCE TYPE</label>
-            <select id="entry" name="entry" class="browser-default">
-              <option value="1">CREDIT OPENING BALANCE</option>
-              <option value="2">DEBIT OPENING BALANCE</option>
+            <label>GST CATEGORY</label>
+            <select id="entryType" name="entryType" class="browser-default">
+              <option value="" disabled selected>SELECT GST CATEGORY</option>
+              <option value="EXEMPTED">EXEMPTED</option>
+              <option value="5%">5%</option>
+              <option value="8%">8%</option>
+              <option value="15%">15%</option>
+              <option value="18%">18%</option>
             </select>
           </div>
         </div>
 
         <div class="right-align">
           <button
-            class="btn waves-effect waves-light"
+            class="btn-small waves-effect waves-light"
             type="submit"
             id="btnSave"
             name="action"
@@ -119,7 +92,7 @@
       src="../assets/js/materialize.min.js"
     ></script>
 
-    <script src="./account.js"></script>
+    <script src="./item.js"></script>
 
     <script>
       if (window.module) module = window.module;

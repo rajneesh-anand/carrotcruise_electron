@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css" />
     <link rel="stylesheet" href="../assets/css/materialize.min.css" />
     <!-- <style>
       .datepicker-modal {
@@ -16,20 +14,20 @@
   <body onkeydown="return (event.keyCode!=13)" onunload="">
     <div
       class="row"
-      style="display: flex; padding-left: 1rem; padding-right: 1rem;"
+      style="display: flex; padding-left: 1rem; padding-right: 1rem"
     >
       <h6 class="flow-text teal-text text-darken-3">GENERATE LEDGER</h6>
 
       <a
         class="btn-flat"
         id="btnClose"
-        style="margin-left: auto; padding-top: 1rem;"
+        style="margin-left: auto; padding-top: 1rem"
       >
         <i class="material-icons right">close</i></a
       >
     </div>
     <hr />
-    <div class="row" style="margin-top: 20px;">
+    <div class="row" style="margin-top: 20px">
       <form class="col s12">
         <div class="row">
           <div class="col s6">
@@ -75,26 +73,24 @@
           </div>
         </div>
         <div class="row">
-          <div class="col s12">         
+          <div class="col s12">
             <div class="inline">
               <select
                 name="accountList"
                 id="accountList"
                 class="browser-default accountList"
-              >
-              </select>
+              ></select>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col s12">
-        <label>
-          <input type="checkbox" class="filled-in" id="all" />
-          <span>ALL CUSTOMERS</span>
-        </label>
+            <label>
+              <input type="checkbox" class="filled-in" id="all" />
+              <span>ALL CUSTOMERS</span>
+            </label>
           </div>
         </div>
-
 
         <div class="right-align">
           <button
@@ -102,7 +98,7 @@
             type="submit"
             id="generate"
             name="action"
-            style="margin-top: 6rem;"
+            style="margin-top: 6rem"
           >
             GENERATE REPORT
           </button>

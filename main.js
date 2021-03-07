@@ -544,6 +544,8 @@ ipcMain.on("create:messengerWindow", (event, fileName) => {
   });
 });
 
+// Report Window
+
 ipcMain.on("create:reportWindow", (event, fileName) => {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   const modalPath = path.join(
@@ -567,6 +569,85 @@ ipcMain.on("create:reportWindow", (event, fileName) => {
   // win.webContents.openDevTools();
 
   win.loadURL(modalPath);
+
+  win.on("closed", () => {
+    win = null;
+  });
+});
+
+// Item Window
+
+ipcMain.on("create:itemwindow", (event, fileName) => {
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  const modalPath = path.join(
+    `file://${__dirname}/renderers/` + fileName + `.html`
+  );
+
+  let win = new BrowserWindow({
+    resizable: false,
+    height: 510,
+    width: 600,
+    frame: false,
+    title: "Reports",
+    parent: mainWindow,
+    modal: true,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    },
+  });
+
+  win.webContents.openDevTools();
+
+  win.loadURL(modalPath);
+
+  win.on("closed", () => {
+    win = null;
+  });
+});
+
+// Edit Item Window
+
+const fetchItemDataByID = async (id) => {
+  return await axios
+    .get(`http://localhost:3000/api/item/${id}`)
+    .then((response) => {
+      console.log(response.data);
+      return response.data.data;
+    })
+    .catch((error) => {
+      if (error) throw new Error(error);
+    });
+};
+
+ipcMain.on("item:edit", (event, args) => {
+  console.log(args);
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+  const modalPath = path.join(`file://${__dirname}/renderers/item_edit.html`);
+
+  let win = new BrowserWindow({
+    resizable: false,
+    height: 510,
+    width: 600,
+    frame: false,
+    title: "Item",
+    parent: mainWindow,
+    modal: true,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    },
+  });
+
+  win.webContents.openDevTools();
+
+  win.loadURL(modalPath);
+
+  win.webContents.on("did-finish-load", (event) => {
+    fetchItemDataByID(args.itemID).then((itemData) => {
+      win.webContents.send("sendItemDataForEdit", itemData);
+    });
+  });
 
   win.on("closed", () => {
     win = null;

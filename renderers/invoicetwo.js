@@ -63,6 +63,7 @@ handlebars.registerHelper("formatDate", function (dateString) {
   }
   return `${date} ${month} ${year}`;
 });
+var itemList = [];
 
 $(document).ready(function () {
   const btnClose = document.getElementById("btnClose");
@@ -78,6 +79,7 @@ $(document).ready(function () {
     format: "dd mmm yyyy",
     setDefaultDate: true,
   });
+  itemNames();
   addRow(table);
 });
 
@@ -144,19 +146,44 @@ addItem.addEventListener("click", (e) => {
     return;
   }
   addRow(table);
+  populateItemList();
 });
 
-const itemsNames = ["Car", "Bike", "volvocar"];
+//const itemsNames = ["Car", "Bike", "volvocar"];
+
+function itemNames() {
+  axios
+    .get(`http://localhost:3000/api/fetchitemnames`)
+    .then((response) => {
+      let itemsRecord = response.data.data;
+      itemsRecord.map((item) => {
+        itemList.push(item);
+      });
+    })
+    .catch((error) => {
+      alert(error.response.data.message);
+    });
+}
+
+function populateItemList() {
+  var Options = "";
+  itemList.map((item) => {
+    Options =
+      Options + `<option value=${item.Item_Name}>${item.Item_Name}</option>`;
+  });
+
+  $(".itemSelect").append(Options);
+  $(".itemSelect").formSelect();
+}
 
 function addRow(table) {
+  console.log(itemList);
   let tr = document.createElement("tr");
   tr.innerHTML =
     "<td>" +
-    `<select class="browser-default">` +
-    itemsNames
-      .map((item) => `<option value=${item}>${item}</option>`)
-      .join("") +
-    `</select>` +
+    `<select id="itemSelect" class="browser-default itemSelect"> 
+    <option value="car">Car</option>
+    </select>` +
     "</td>" +
     "<td>" +
     `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
