@@ -80,7 +80,15 @@ $(function () {
     setDefaultDate: true,
   });
   itemNames(addRow, 1);
-  // addRow(table);
+});
+
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "Escape":
+      const window = remote.getCurrentWindow();
+      window.close();
+      break;
+  }
 });
 
 function formattedDate(dateValue) {

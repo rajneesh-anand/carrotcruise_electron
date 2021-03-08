@@ -36,4 +36,18 @@ router.post("/company", (req, res) => {
   }
 });
 
+router.get("/company", (req, res) => {
+  let sql = `SELECT * from company`;
+  db.get(sql, [], (err, row) => {
+    if (err) {
+      return console.error(err.message);
+    } else {
+      return res.json({
+        success: 1,
+        data: row,
+      });
+    }
+  });
+});
+
 module.exports = router;

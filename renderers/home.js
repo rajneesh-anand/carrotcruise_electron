@@ -342,6 +342,33 @@ form.addEventListener("submit", (event) => {
 });
 //
 
+// Fetch Company Info
+
+function fetchCompanyInfo() {
+  axios
+    .get(`http://localhost:3000/api/company`)
+    .then((response) => {
+      let compData = response.data.data;
+      console.log(compData);
+      if (Object.keys(compData).length !== 0) {
+        document.getElementById("name").value = compData.Name;
+
+        var arrayBufferView = new Uint8Array(compData.Company_Logo.data);
+        var blob = new Blob([arrayBufferView], { type: "image/jpeg" });
+        var urlCreator = window.URL || window.webkitURL;
+        var imageUrl = urlCreator.createObjectURL(blob);
+        // var img = document.querySelector( "#photo" );
+        // img.src = imageUrl;
+
+        // var imageUrl = URL.createObjectURL(compData.Company_Logo.data);
+        document.querySelector("#image").src = imageUrl;
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
 const button = document.getElementById("newUser");
 button.addEventListener("click", (event) => {
   ipcRenderer.send("create:user", "user");
@@ -411,6 +438,7 @@ const companyInfo = document.getElementById("companyInfo");
 companyInfo.addEventListener("click", (event) => {
   $("#createTable").hide();
   $("#companyDetails").show();
+  fetchCompanyInfo();
 });
 
 const ledgerButton = document.getElementById("ledger");

@@ -55,10 +55,6 @@
                   serif;
               "
             ></p>
-            <!-- <a href="javascript:void(0);" class="account-settings-link">
-              <p id="userName"></p>
-              <span id="userEmail"></span>
-            </a> -->
 
             <a href="javascript:void(0);" id="btnLogout"
               >Logout <i class="small material-icons">exit_to_app</i></a
@@ -231,6 +227,7 @@
             <div class="row">
               <div class="input-field col s6">
                 <input
+                  placeholder=""
                   id="name"
                   name="name"
                   type="text"
@@ -254,10 +251,13 @@
                   <input class="file-path validate" type="text" />
                 </div>
               </div>
-              <div id="gallery" name="gallery" class="gallery"></div>
+              <div id="gallery" name="gallery" class="gallery">
+                <img id="image" />
+              </div>
 
               <div class="input-field col s3">
                 <input
+                  placeholder=""
                   id="address_one"
                   type="text"
                   name="address_one"
@@ -270,6 +270,7 @@
             <div class="row">
               <div class="input-field col s6">
                 <input
+                  placeholder=""
                   id="city"
                   type="text"
                   name="city"
@@ -280,6 +281,7 @@
               </div>
               <div class="input-field col s2">
                 <input
+                  placeholder=""
                   id="pincode"
                   type="text"
                   name="pincode"
@@ -301,6 +303,7 @@
               <div class="input-field col s3">
                 <i class="material-icons prefix">phone</i>
                 <input
+                  placeholder=""
                   id="phone"
                   type="text"
                   name="phone"
@@ -312,6 +315,7 @@
               <div class="input-field col s3">
                 <i class="material-icons prefix">phone_android</i>
                 <input
+                  placeholder=""
                   id="mobile"
                   name="mobile"
                   type="tel"
@@ -322,12 +326,19 @@
               </div>
               <div class="input-field col s3">
                 <i class="material-icons prefix">edit</i>
-                <input id="pan" type="text" name="pan" class="validate" />
+                <input
+                  placeholder=""
+                  id="pan"
+                  type="text"
+                  name="pan"
+                  class="validate"
+                />
                 <label for="pan">PAN</label>
               </div>
               <div class="input-field col s3">
                 <i class="material-icons prefix">edit</i>
                 <input
+                  placeholder=""
                   id="gstin"
                   type="text"
                   name="gstin"
@@ -340,12 +351,19 @@
             <div class="row">
               <div class="input-field col s6">
                 <i class="material-icons prefix">email</i>
-                <input id="email" type="email" name="email" class="validate" />
+                <input
+                  id="email"
+                  placeholder=""
+                  type="email"
+                  name="email"
+                  class="validate"
+                />
                 <label for="email">Email</label>
               </div>
               <div class="input-field col s6">
                 <i class="material-icons prefix">email</i>
                 <input
+                  placeholder=""
                   id="website"
                   type="text"
                   name="website"
@@ -375,12 +393,7 @@
         module = undefined;
       }
     </script>
-    <!-- 
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"
-    ></script> -->
+
     <script
       type="text/javascript"
       src="../assets/js/jquery-3.4.1.min.js"
@@ -390,7 +403,6 @@
       src="../assets/js/materialize.min.js"
     ></script>
 
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
     <script src="../assets/js/jquery.dataTables.min.js"></script>
 
     <script
