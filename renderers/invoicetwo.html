@@ -74,7 +74,7 @@
     <div class="row" style="margin-top: 15px">
       <form method="post" class="col s12">
         <div class="row" style="margin-bottom: 0px !important">
-          <div class="input-field col s3">
+          <div class="input-field col s2">
             <i class="material-icons prefix">arrow_forward</i>
             <input
               placeholder=""
@@ -87,7 +87,7 @@
             <label for="invoice_no">INVOICE NO.</label>
           </div>
 
-          <div class="input-field col s3">
+          <div class="input-field col s2">
             <i class="material-icons prefix">date_range</i>
             <input
               id="invoice_date"
@@ -99,7 +99,15 @@
             <label for="invoice_date">INVOICE DATE</label>
           </div>
 
-          <div class="col s6">
+          <div class="col s3">
+            <label>INVOICE TYPE </label>
+            <select name="invoicetype" class="browser-default invoicetype">
+              <option value="CREDIT INVOICE">CREDIT INVOICE</option>
+              <option value="CASH INVOICE">CASH INVOICE</option>
+            </select>
+          </div>
+
+          <div class="col s5">
             <label>M/S NAME *</label>
             <select name="agent" class="browser-default agentName">
               <option value="" disabled selected>Select Agent</option>
@@ -109,15 +117,17 @@
 
         <div
           class="row"
-          style="margin-bottom: 0px !important; margin-top: 10px"
+          style="margin-bottom: 0px !important; margin-top: 10px; height: 60vh"
         >
-          <div class="col s8">
+          <div class="col s12">
             <table id="itemTable" class="stripped">
               <tr>
                 <th>Particulars / Item Name</th>
-                <th style="width: 60px">Quantity*</th>
-                <th style="width: 100px">Rate / Price</th>
-                <th style="width: 100px">Amount</th>
+                <th style="width: 80px">Quantity*</th>
+                <th style="width: 120px">Rate / Price *</th>
+                <th style="width: 120px">Amount</th>
+                <th style="width: 60px">GST %</th>
+                <th style="width: 120px">GST Amount</th>
                 <th style="width: 15px"></th>
               </tr>
             </table>
@@ -131,154 +141,46 @@
               </button>
             </div>
           </div>
+        </div>
+        <div class="row">
+          <div class="col s2">
+            <p>TAXABLE AMOUNT</p>
+            <p id="TotalTaxableAmount"></p>
+          </div>
+          <div class="col s2">
+            <p>TOTAL GST</p>
+            <p id="totalGstAmount"></p>
+          </div>
+          <div class="col s2">
+            <p>TOTAL AMOUNT</p>
+            <p id="totalAmount"></p>
+          </div>
 
-          <div class="col s4">
-            <div style="display: flex; padding: 0px 15px">
-              <table id="calcTable">
-                <tr>
-                  <th>Description</th>
-                  <th></th>
-                  <th>Amount</th>
-                </tr>
-                <tr>
-                  <td>BASE AMOUNT</td>
-                  <td></td>
-                  <td id="baseAmt"></td>
-                </tr>
-                <tr>
-                  <td>IGST %</td>
-                  <td>
-                    <input
-                      type="text"
-                      class="customInput"
-                      name="igstRate"
-                      id="igstRate"
-                      onkeypress="return isNumberKey(event,this);"
-                      onkeyup="CalculateTotal(this);"
-                    />
-                  </td>
-                  <td id="igstAmount"></td>
-                </tr>
-                <tr>
-                  <td>CGST %</td>
-                  <td>
-                    <input
-                      type="text"
-                      class="customInput"
-                      id="cgstRate"
-                      name="cgstRate"
-                      onkeypress="return isNumberKey(event,this);"
-                      onkeyup="CalculateTotal(this);"
-                    />
-                  </td>
-                  <td id="cgstAmount"></td>
-                </tr>
-                <tr>
-                  <td>SGST %</td>
-                  <td>
-                    <input
-                      type="text"
-                      class="customInput"
-                      id="sgstRate"
-                      name="sgstRate"
-                      onkeypress="return isNumberKey(event,this);"
-                      onkeyup="CalculateTotal(this);"
-                    />
-                  </td>
-                  <td id="sgstAmount"></td>
-                </tr>
-                <tr>
-                  <td>NET AMOUNT</td>
-                  <td></td>
-                  <td
-                    id="totalAmount"
-                    style="font-size: 25px; color: brown"
-                  ></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>
-                    <button
-                      class="btn-small waves-effect waves-light"
-                      id="btnSave"
-                    >
-                      SAVE
-                    </button>
-                  </td>
-
-                  <td>
-                    <button
-                      class="btn-small waves-effect waves-light"
-                      id="btnNew"
-                      disabled
-                    >
-                      ADD NEW
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      class="btn-small waves-effect waves-light"
-                      id="btnDownload"
-                      disabled
-                    >
-                      DOWNLOAD
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </table>
+          <div
+            style="text-align: end; display: flex; justify-content: flex-end"
+          >
+            <div style="margin: 0 6px 0 0">
+              <button
+                class="btn waves-effect waves-light"
+                type="submit"
+                id="btnSave"
+                name="action"
+              >
+                SAVE
+              </button>
+            </div>
+            <div style="margin: 0 6px 0 0">
+              <button class="btn waves-effect waves-light" id="btnNew">
+                ADD NEW
+              </button>
+            </div>
+            <div style="margin: 0 6px 0 0">
+              <button class="btn waves-effect waves-light" id="btnDownload">
+                DOWNLOAD
+              </button>
             </div>
           </div>
         </div>
-
-        <!-- <div class="row" style="margin-bottom: 0px !important">
-          <button class="btn-small waves-effect waves-light" id="btnSave">
-            SAVE
-          </button>
-        </div> -->
       </form>
     </div>
 

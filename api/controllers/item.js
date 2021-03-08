@@ -96,7 +96,7 @@ module.exports = {
 
   fetchItemNames: (req, res, next) => {
     const id = req.params.id;
-    let sql = `SELECT Item_Name from item ORDER BY Item_Name ASC`;
+    let sql = `SELECT Item_Name, Gst_Rate from item ORDER BY Item_Name ASC`;
     db.all(sql, [], (err, row) => {
       if (err) {
         return res.json({

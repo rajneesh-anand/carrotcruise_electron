@@ -64,10 +64,10 @@ handlebars.registerHelper("formatDate", function (dateString) {
   return `${date} ${month} ${year}`;
 });
 var itemList = [];
+// var gstRate = 0;
 
-$(document).ready(function () {
+$(function () {
   const btnClose = document.getElementById("btnClose");
-  let table = document.getElementById("itemTable");
   btnClose.addEventListener("click", (event) => {
     const window = remote.getCurrentWindow();
     window.close();
@@ -79,8 +79,8 @@ $(document).ready(function () {
     format: "dd mmm yyyy",
     setDefaultDate: true,
   });
-  itemNames();
-  addRow(table);
+  itemNames(addRow, 1);
+  // addRow(table);
 });
 
 function formattedDate(dateValue) {
@@ -141,55 +141,59 @@ addItem.addEventListener("click", (e) => {
   e.preventDefault();
   let table = document.getElementById("itemTable");
   let rowCnt = table.rows.length;
+
   let total = table.rows[rowCnt - 1].cells[3].innerText;
   if (total === "" || total == 0) {
     return;
   }
-  addRow(table);
-  populateItemList();
+  addRow(rowCnt);
+  // populateItemList();
 });
 
 //const itemsNames = ["Car", "Bike", "volvocar"];
 
-function itemNames() {
+function itemNames(cb) {
   axios
     .get(`http://localhost:3000/api/fetchitemnames`)
     .then((response) => {
-      let itemsRecord = response.data.data;
-      itemsRecord.map((item) => {
+      response.data.data.map((item) => {
         itemList.push(item);
       });
+      cb(arguments[1]);
     })
     .catch((error) => {
       alert(error.response.data.message);
     });
 }
 
-function populateItemList() {
-  var Options = "";
-  itemList.map((item) => {
-    Options =
-      Options + `<option value=${item.Item_Name}>${item.Item_Name}</option>`;
-  });
-
-  $(".itemSelect").append(Options);
-  $(".itemSelect").formSelect();
+function findGstRate(selectedValue) {
+  console.log(selectedValue);
+  const result = itemList.find(({ Item_Name }) => Item_Name === selectedValue);
+  let gstRate = parseFloat(result.Gst_Rate.slice(0, -1));
+  console.log(gstRate);
+  return gstRate.toFixed(2);
 }
 
-function addRow(table) {
-  console.log(itemList);
+function addRow(trIndex) {
+  let table = document.getElementById("itemTable");
   let tr = document.createElement("tr");
   tr.innerHTML =
     "<td>" +
-    `<select id="itemSelect" class="browser-default itemSelect"> 
-    <option value="car">Car</option>
+    `<select id="itemSelect" class="browser-default itemSelect" onchange="findGstRate(this.value)">  
+    ${itemList.map(
+      (item) => `<option value='${item.Item_Name}'>${item.Item_Name}</option>`
+    )}  
     </select>` +
     "</td>" +
     "<td>" +
-    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
+    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${trIndex}) />` +
     "</td>" +
     "<td>" +
-    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
+    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${trIndex}) />` +
+    "</td>" +
+    "<td>" +
+    "</td>" +
+    "<td>" +
     "</td>" +
     "<td>" +
     "</td>" +
@@ -204,115 +208,52 @@ function addRow(table) {
 function removeRow(oButton) {
   let table = document.getElementById("itemTable");
   let rowCnt = table.rows.length;
-  if (rowCnt === 2) {
+
+  if (oButton.parentNode.parentNode.rowIndex === 1) {
     return;
   } else {
     table.deleteRow(oButton.parentNode.parentNode.rowIndex);
-    CalculateTotal_AfterRowDelete(table);
+    setInvoiceAmount();
   }
 }
 
-function CalculateTotal_AfterRowDelete(table) {
-  let netTotal = 0;
-  for (var i = 1; i < table.rows.length; i++) {
-    let rowTotal =
-      table.rows[i].cells[3].innerText === ""
-        ? 0
-        : table.rows[i].cells[3].innerText;
-    netTotal = netTotal + parseFloat(rowTotal);
-  }
-  document.getElementById("baseAmt").innerText = netTotal.toFixed(2);
-
-  let cgstRate =
-    document.getElementById("cgstRate").value === ""
-      ? 0
-      : document.getElementById("cgstRate").value;
-
-  let igstRate =
-    document.getElementById("igstRate").value === ""
-      ? 0
-      : document.getElementById("igstRate").value;
-  let sgstRate =
-    document.getElementById("sgstRate").value === ""
-      ? 0
-      : document.getElementById("sgstRate").value;
-
-  let cgstAmount = (
-    (parseFloat(netTotal) * parseFloat(cgstRate)) /
-    100
-  ).toFixed(2);
-  let igstAmount = (
-    (parseFloat(netTotal) * parseFloat(igstRate)) /
-    100
-  ).toFixed(2);
-  let sgstAmount = (
-    (parseFloat(netTotal) * parseFloat(sgstRate)) /
-    100
-  ).toFixed(2);
-
-  let Total =
-    parseFloat(netTotal) +
-    parseFloat(cgstAmount) +
-    parseFloat(igstAmount) +
-    parseFloat(sgstAmount);
-
-  document.getElementById("cgstAmount").innerText = cgstAmount;
-  document.getElementById("igstAmount").innerText = igstAmount;
-  document.getElementById("sgstAmount").innerText = sgstAmount;
-  document.getElementById("totalAmount").innerText = Total.toFixed(2);
-}
-
-function GetTotal() {
-  var netTotal = 0;
+function GetTotal(rowIndex) {
+  console.log(rowIndex);
   var tableRows = document.getElementById("itemTable").rows;
-  for (var i = 1; i < tableRows.length; i++) {
-    let el = tableRows[i].children;
-    let rQnty = el[1].children[0].value === "" ? 0 : el[1].children[0].value;
-    let rRate = el[2].children[0].value === "" ? 0 : el[2].children[0].value;
-    let rTotal = parseFloat(rQnty) * parseFloat(rRate);
-    tableRows[i].cells[3].innerHTML = rTotal.toFixed(2);
-    netTotal = netTotal + parseFloat(rTotal);
+  let el = tableRows[rowIndex].children;
+  let itemName = el[0].children[0].value === "" ? 0 : el[0].children[0].value;
+  console.log(itemName);
+  let gstRate = findGstRate(itemName);
+  console.log(gstRate);
+  let rQnty = el[1].children[0].value === "" ? 0 : el[1].children[0].value;
+  let rRate = el[2].children[0].value === "" ? 0 : el[2].children[0].value;
+  let rTotal = parseFloat(rQnty) * parseFloat(rRate);
+  let rGST = (parseFloat(rTotal) * parseFloat(gstRate)) / 100;
+  tableRows[rowIndex].cells[4].innerHTML = gstRate;
+  tableRows[rowIndex].cells[5].innerHTML = rGST.toFixed(2);
+  tableRows[rowIndex].cells[3].innerHTML = rTotal.toFixed(2);
+  setInvoiceAmount();
+}
+
+function setInvoiceAmount() {
+  var totalTaxableAmount = 0;
+  var totalGstAmount = 0;
+  var totalAmount = 0;
+  const tRows = document.getElementById("itemTable").rows;
+
+  for (var i = 1; i < tRows.length; i++) {
+    let el = tRows[i].children;
+    totalTaxableAmount = totalTaxableAmount + parseFloat(el[3].innerText);
+    totalGstAmount = totalGstAmount + parseFloat(el[5].innerText);
   }
-
-  document.getElementById("baseAmt").innerText = netTotal.toFixed(2);
-
-  let cgstRate =
-    document.getElementById("cgstRate").value === ""
-      ? 0
-      : document.getElementById("cgstRate").value;
-
-  let igstRate =
-    document.getElementById("igstRate").value === ""
-      ? 0
-      : document.getElementById("igstRate").value;
-  let sgstRate =
-    document.getElementById("sgstRate").value === ""
-      ? 0
-      : document.getElementById("sgstRate").value;
-
-  let cgstAmount = (
-    (parseFloat(netTotal) * parseFloat(cgstRate)) /
-    100
-  ).toFixed(2);
-  let igstAmount = (
-    (parseFloat(netTotal) * parseFloat(igstRate)) /
-    100
-  ).toFixed(2);
-  let sgstAmount = (
-    (parseFloat(netTotal) * parseFloat(sgstRate)) /
-    100
-  ).toFixed(2);
-
-  let Total =
-    parseFloat(netTotal) +
-    parseFloat(cgstAmount) +
-    parseFloat(igstAmount) +
-    parseFloat(sgstAmount);
-
-  document.getElementById("cgstAmount").innerText = cgstAmount;
-  document.getElementById("igstAmount").innerText = igstAmount;
-  document.getElementById("sgstAmount").innerText = sgstAmount;
-  document.getElementById("totalAmount").innerText = Total.toFixed(2);
+  totalAmount = parseFloat(totalTaxableAmount) + parseFloat(totalGstAmount);
+  document.getElementById(
+    "TotalTaxableAmount"
+  ).innerText = totalTaxableAmount.toFixed(2);
+  document.getElementById("totalGstAmount").innerText = totalGstAmount.toFixed(
+    2
+  );
+  document.getElementById("totalAmount").innerText = totalAmount.toFixed(2);
 }
 
 function table_to_array(table_id) {
@@ -326,17 +267,21 @@ function table_to_array(table_id) {
   ) {
     for (var i = 1; i < myData.length - 1; i++) {
       let el = myData[i].children;
-      // console.log(myData[i].children[0].childNodes[0].value);
+
       let itemName = myData[i].children[0].childNodes[0].value;
       let rQnty = el[1].children[0].value;
       let rRate = el[2].children[0].value;
       let rTotal = el[3].innerText;
+      let rGstRate = el[4].innerText;
+      let rGst = el[5].innerText;
 
       let rowItem = {
         itemName: itemName,
         rQnty: rQnty,
         rRate: rRate,
         rTotal: parseFloat(rTotal).toFixed(2),
+        rGst: parseFloat(rGst).toFixed(2),
+        rGstRate: parseFloat(rGstRate),
       };
 
       my_list.push(rowItem);
@@ -349,63 +294,21 @@ function table_to_array(table_id) {
       let rQnty = el[1].children[0].value;
       let rRate = el[2].children[0].value;
       let rTotal = el[3].innerText;
+      let rGstRate = el[4].innerText;
+      let rGst = el[5].innerText;
 
       let rowItem = {
         itemName: itemName,
         rQnty: rQnty,
         rRate: rRate,
         rTotal: parseFloat(rTotal).toFixed(2),
+        rGst: parseFloat(rGst).toFixed(2),
+        rGstRate: parseFloat(rGstRate),
       };
-
       my_list.push(rowItem);
     }
   }
   return JSON.stringify(my_list);
-}
-
-function CalculateTotal(obj) {
-  let baseAmount =
-    document.getElementById("baseAmt").innerText === ""
-      ? 0
-      : document.getElementById("baseAmt").innerText;
-
-  let cgstRate =
-    document.getElementById("cgstRate").value === ""
-      ? 0
-      : document.getElementById("cgstRate").value;
-
-  let igstRate =
-    document.getElementById("igstRate").value === ""
-      ? 0
-      : document.getElementById("igstRate").value;
-  let sgstRate =
-    document.getElementById("sgstRate").value === ""
-      ? 0
-      : document.getElementById("sgstRate").value;
-
-  let cgstAmount = (
-    (parseFloat(baseAmount) * parseFloat(cgstRate)) /
-    100
-  ).toFixed(2);
-  let igstAmount = (
-    (parseFloat(baseAmount) * parseFloat(igstRate)) /
-    100
-  ).toFixed(2);
-  let sgstAmount = (
-    (parseFloat(baseAmount) * parseFloat(sgstRate)) /
-    100
-  ).toFixed(2);
-
-  let Total =
-    parseFloat(baseAmount) +
-    parseFloat(cgstAmount) +
-    parseFloat(igstAmount) +
-    parseFloat(sgstAmount);
-
-  document.getElementById("cgstAmount").innerText = cgstAmount;
-  document.getElementById("igstAmount").innerText = igstAmount;
-  document.getElementById("sgstAmount").innerText = sgstAmount;
-  document.getElementById("totalAmount").innerText = Total.toFixed(2);
 }
 
 function formattedDate(dateValue) {
@@ -431,7 +334,6 @@ document.getElementById("btnDownload").addEventListener("click", (event) => {
   event.preventDefault();
   fs.access("C://PDF_REPORTS", function (error) {
     if (error) {
-      // console.log("Directory does not exist.");
       fs.mkdirSync("C://PDF_REPORTS");
     }
   });
@@ -448,10 +350,10 @@ document.getElementById("btnNew").addEventListener("click", (event) => {
 });
 
 const isvalid = () => {
-  let baseAmount = document.getElementById("baseAmt").value;
+  let baseAmount = document.getElementById("TotalTaxableAmount").innerText;
   let agent = document.querySelector(".agentName").value;
 
-  if (baseAmount === "" || baseAmount === 0 || agent === "") {
+  if (baseAmount === "" || baseAmount === "0.00" || agent === "") {
     return false;
   } else {
     return true;
@@ -463,13 +365,9 @@ var form = document.querySelector("form");
 form.addEventListener("submit", function (event) {
   event.preventDefault();
   if (isvalid()) {
-    let baseAmt = document.getElementById("baseAmt").innerText;
-    let cgstAmt = document.getElementById("cgstAmount").innerText;
-    let sgstAmt = document.getElementById("sgstAmount").innerText;
-    let igstAmt = document.getElementById("igstAmount").innerText;
+    let taxableAmt = document.getElementById("TotalTaxableAmount").innerText;
+    let gstAmt = document.getElementById("totalGstAmount").innerText;
     let totalAmt = document.getElementById("totalAmount").innerText;
-    let totalgst =
-      parseFloat(cgstAmt) + parseFloat(sgstAmt) + parseFloat(igstAmt);
 
     let data = new FormData(form);
 
@@ -478,22 +376,21 @@ form.addEventListener("submit", function (event) {
       Invoice_Number: data.get("invoice_no"),
       Invoice_Date: formattedDate(data.get("invoice_date")),
       Agent_Name: data.get("agent"),
-      Base_Amount: baseAmt,
-      Cgst_Rate: data.get("cgstRate") === "" ? 0 : data.get("cgstRate"),
-      Sgst_Rate: data.get("sgstRate") === "" ? 0 : data.get("sgstRate"),
-      Igst_Rate: data.get("igstRate") === "" ? 0 : data.get("igstRate"),
-      Cgst_Amount: cgstAmt,
-      Sgst_Amount: sgstAmt,
-      Igst_Amount: igstAmt,
-      TotalGst_Amount: totalgst.toFixed(2),
-      Total_Amount: totalAmt,
-      Credit_Account: "ACC1",
-      Credit_Amount: totalAmt,
+      Invoice_Type: data.get("invoicetype"),
+      Base_Amount: parseFloat(taxableAmt).toFixed(2),
+      TotalGst_Amount: parseFloat(gstAmt).toFixed(2),
+      Total_Amount: parseFloat(totalAmt).toFixed(2),
+      Credit_Account:
+        data.get("invoicetype") === "CREDIT INVOICE" ? "ACC1" : "ACC2",
+      Credit_Amount: parseFloat(totalAmt).toFixed(2),
       Debit_Account: data.get("agent"),
-      Debit_Amount: totalAmt,
-      EntryType: "Invoice",
+      Debit_Amount: parseFloat(totalAmt).toFixed(2),
+      EntryType: data.get("invoicetype"),
       InvoiceNumber: data.get("invoice_no"),
-      Comments: "INVOICE",
+      Comments:
+        data.get("invoicetype") === "CREDIT INVOICE"
+          ? "INVOICE"
+          : "CASH INVOICE",
     };
     console.log(invoiceData);
 

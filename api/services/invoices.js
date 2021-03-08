@@ -74,43 +74,40 @@ module.exports = {
     );
   },
   createItemInvoice: (data, callback) => {
-    const sql = `INSERT INTO invoice(Invoice_Number,Invoice_Date,Customer_Id,Base_Amount,CGST_Rate,SGST_Rate,IGST_Rate,CGST_Amount,SGST_Amount,IGST_Amount,TOTAL_GST_Amount,TOTAL_Amount,Invoice_Items)     
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);    
+    if (data.Invoice_Type === "CREDIT INVOICE") {
+      const sql = `INSERT INTO invoice(Invoice_Number,Invoice_Type,Invoice_Date,Customer_Id,Base_Amount,TOTAL_GST_Amount,TOTAL_Amount,Invoice_Items)     
+      VALUES(?,?,?,?,?,?,?,?);    
       INSERT INTO payments(EntryDate,Credit_Account,Credit_Amount,Debit_Account,Debit_Amount,EntryType,Invoice_Number,Comments)
       VALUES(?,?,?,?,?,?,?,?)`;
 
-    pool.query(
-      sql,
-      [
-        data.Invoice_Number,
-        data.Invoice_Date,
-        data.Agent_Name,
-        data.Base_Amount,
-        data.Cgst_Rate,
-        data.Sgst_Rate,
-        data.Igst_Rate,
-        data.Cgst_Amount,
-        data.Sgst_Amount,
-        data.Igst_Amount,
-        data.TotalGst_Amount,
-        data.Total_Amount,
-        data.InvoiceItems,
-        data.Invoice_Date,
-        data.Credit_Account,
-        data.Credit_Amount,
-        data.Debit_Account,
-        data.Debit_Amount,
-        data.EntryType,
-        data.InvoiceNumber,
-        data.Comments,
-      ],
-      (error, results, fields) => {
-        if (error) {
-          callback(error);
+      pool.query(
+        sql,
+        [
+          data.Invoice_Number,
+          data.Invoice_Type,
+          data.Invoice_Date,
+          data.Agent_Name,
+          data.Base_Amount,
+          data.TotalGst_Amount,
+          data.Total_Amount,
+          data.InvoiceItems,
+          data.Invoice_Date,
+          data.Credit_Account,
+          data.Credit_Amount,
+          data.Debit_Account,
+          data.Debit_Amount,
+          data.EntryType,
+          data.InvoiceNumber,
+          data.Comments,
+        ],
+        (error, results, fields) => {
+          if (error) {
+            callback(error);
+          }
+          return callback(null, results);
         }
-        return callback(null, results);
-      }
-    );
+      );
+    }
   },
 
   updateInvoice: (data, callBack) => {
