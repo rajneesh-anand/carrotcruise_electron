@@ -84,6 +84,16 @@ handlebars.registerHelper("formatDate", function (dateString) {
   return `${date} ${month} ${year}`;
 });
 
+handlebars.registerHelper("halfValue", function (a) {
+  let s = a / 2;
+  return s;
+});
+
+handlebars.registerHelper("halfValueAmount", function (a) {
+  let s = a / 2;
+  return s.toFixed(2);
+});
+
 function ValidateNumbers(e) {
   document.oncontextmenu = function () {
     return false;
@@ -109,16 +119,16 @@ const texts = remote.getGlobal("sharedObject").someProperty;
 
 // document.getElementById("abc").value = texts;
 
-async function ifInvoiceExits() {
-  let { data } = await axios.get(`http://localhost:3000/api/getinvoices`);
+// async function ifInvoiceExits() {
+//   let { data } = await axios.get(`http://localhost:3000/api/getinvoices`);
 
-  return data.data.length;
-}
+//   return data.data.length;
+// }
 
-async function ifCustomerExits() {
-  let { data } = await axios.get(`http://localhost:3000/api/getcustomers`);
-  return data.data.length;
-}
+// async function ifCustomerExits() {
+//   let { data } = await axios.get(`http://localhost:3000/api/getcustomers`);
+//   return data.data.length;
+// }
 
 function getLedgerListAPICall(callback) {
   axios
@@ -193,7 +203,7 @@ function getReceiveListAPICall(callback) {
     });
 }
 
-$(document).ready(function () {
+$(function () {
   dataPath = path.join(storage.getDataPath(), "../storage");
   storage.setDataPath(dataPath);
 
@@ -202,47 +212,38 @@ $(document).ready(function () {
 
     document.getElementById("userName").innerText = data.name;
 
-    if (data.role === "guest") {
-      $("#setAccount ").hover(function () {
+    if (data.role === "Member") {
+      $("#setAccount ").on("mouseenter", function () {
         $(this)
           .children("a")
-          .click(function () {
+          .on("click", function () {
             return false;
           });
       });
 
-      $("#setPayment ").hover(function () {
+      $("#setPayment ").on("mouseenter", function () {
         $(this)
           .children("a")
-          .click(function () {
+          .on("click", function () {
             return false;
           });
       });
 
-      $("#setReceive ").hover(function () {
+      $("#setReceive ").on("mouseenter", function () {
         $(this)
           .children("a")
-          .click(function () {
+          .on("click", function () {
             return false;
           });
       });
 
-      $("#newUser a").click(function () {
+      $("#newUser a").on("click", function () {
         return false;
       });
     }
-    // document.getElementById("userEmail").innerText = data.email;
   });
 
-  $("#companyDetails").hide();
-
-  ifInvoiceExits().then((res) => {
-    if (res === 0) {
-      noRecordsFound("invoice");
-    } else {
-      generateInvoiceDataTable();
-    }
-  });
+  generateInvoiceDataTable();
 });
 
 const btnlogOut = document.getElementById("btnLogout");
@@ -498,13 +499,7 @@ cusListButton.addEventListener("click", (event) => {
   $("#companyDetails").hide();
   $("#createTable").show();
   $("table").remove();
-  ifCustomerExits().then((res) => {
-    if (res === 0) {
-      noRecordsFound("customer");
-    } else {
-      generateCustomerDataTable();
-    }
-  });
+  generateCustomerDataTable();
 });
 
 const supListButton = document.getElementById("supList");
@@ -528,14 +523,8 @@ invListButton.addEventListener("click", (event) => {
   $("#companyDetails").hide();
   $("#createTable").show();
   $("table").remove();
-  ifInvoiceExits().then((res) => {
-    if (res === 0) {
-      noRecordsFound("invoice");
-    } else {
-      $("#invTable_wrapper").remove();
-      generateInvoiceDataTable();
-    }
-  });
+
+  generateInvoiceDataTable();
 });
 
 // Company Info
@@ -848,13 +837,17 @@ function generateCustomerDataTable() {
     responsive: true,
     processing: true,
     serverSide: true,
-    ajax: "http://localhost:3000/api/customers",
+    ajax: "http://localhost:3000/api/customerlist",
     language: {
       searchPlaceholder: "Search Customer",
       sSearch: "",
+      paginate: {
+        next: "&#8594;", // or '→'
+        previous: "&#8592;", // or '←'
+      },
     },
+    info: false,
     pageLength: 100,
-
     dom: "Bfrtip",
     select: true,
 

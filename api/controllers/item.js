@@ -1,15 +1,5 @@
 const NodeTableSqlite = require("../services/nodetable_sqlite");
-const path = require("path");
-const fs = require("fs");
-var sqlite3 = require("sqlite3").verbose();
-const db_path = path.join(__dirname, "../../neodb.db");
-
-var db = new sqlite3.Database(db_path, sqlite3.OPEN_READWRITE, (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log("Connected to database successfully");
-});
+const db = require("../services/sqliteConfig");
 
 module.exports = {
   createItem: (req, res, next) => {
@@ -17,7 +7,7 @@ module.exports = {
     try {
       const data = req.body;
       db.run(
-        `INSERT INTO item(Item_Name,Gst_Rate,Unit_Price) VALUES(?,?,?)`,
+        `INSERT INTO items(Item_Name,Gst_Rate,Unit_Price) VALUES(?,?,?)`,
         [data.name, data.gst_rate, data.unit_price],
         function (err) {
           if (err) {
@@ -40,7 +30,7 @@ module.exports = {
 
     let columnsMap = [
       {
-        db: "Id",
+        db: "id",
         dt: 0,
       },
       {
@@ -58,9 +48,10 @@ module.exports = {
     ];
 
     // Custome SQL query
-    const query = "SELECT Id, Item_Name, Unit_Price,Gst_Rate FROM item";
+    const query =
+      "SELECT id, Item_Name,HSN_Code, Unit_Price,Gst_Rate FROM items";
     // NodeTable requires table's primary key to work properly
-    const primaryKey = "Id";
+    const primaryKey = "id";
 
     const nodeTable = new NodeTableSqlite(
       requestQuery,
@@ -74,14 +65,13 @@ module.exports = {
         console.log(err);
         return;
       }
-      // Directly send this data as output to Datatable
       res.send(data);
     });
   },
 
   fetchItemById: (req, res, next) => {
     const id = req.params.id;
-    let sql = `SELECT * from item WHERE Id  = ?`;
+    let sql = `SELECT * from items WHERE id  = ?`;
     db.get(sql, [id], (err, row) => {
       if (err) {
         return console.error(err.message);
@@ -96,7 +86,7 @@ module.exports = {
 
   fetchItemNames: (req, res, next) => {
     const id = req.params.id;
-    let sql = `SELECT Item_Name, Gst_Rate from item ORDER BY Item_Name ASC`;
+    let sql = `SELECT Item_Name, Gst_Rate from items ORDER BY Item_Name ASC`;
     db.all(sql, [], (err, row) => {
       if (err) {
         return res.json({
@@ -114,7 +104,7 @@ module.exports = {
   updateItem: (req, res, next) => {
     const data = req.body;
     console.log(data);
-    let sql = `UPDATE item SET Item_Name = ?,Gst_Rate=?,Unit_Price=? WHERE Id = ?`;
+    let sql = `UPDATE items SET Item_Name = ?,Gst_Rate=?,Unit_Price=? WHERE id = ?`;
     db.get(
       sql,
       [data.name, data.gst_rate, data.unit_price, data.id],

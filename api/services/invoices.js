@@ -1,4 +1,5 @@
 const pool = require("../config/database");
+const db = require("./sqliteConfig");
 
 module.exports = {
   create: (data, callBack) => {
@@ -75,14 +76,14 @@ module.exports = {
   },
   createItemInvoice: (data, callback) => {
     if (data.Invoice_Type === "CREDIT INVOICE") {
-      const sql = `INSERT INTO invoice(Invoice_Number,Invoice_Type,Invoice_Date,Customer_Id,Base_Amount,TOTAL_GST_Amount,TOTAL_Amount,Invoice_Items)     
-      VALUES(?,?,?,?,?,?,?,?);    
-      INSERT INTO payments(EntryDate,Credit_Account,Credit_Amount,Debit_Account,Debit_Amount,EntryType,Invoice_Number,Comments)
-      VALUES(?,?,?,?,?,?,?,?)`;
-
-      pool.query(
-        sql,
-        [
+      db.serialize(function (error, results) {
+        db.run("begin transaction");
+        const invoice_sql = `INSERT INTO invoices(Inv_Prefix,Inv_Suffix,Invoice_Number,Invoice_Type,Invoice_Date,Customer_Id,Base_Amount,TOTAL_GST_Amount,TOTAL_Amount,Invoice_Items)     
+        VALUES(?,?,?,?,?,?,?,?,?,?)`;
+        const payments_sql = `INSERT INTO payments(EntryDate,Credit_Account,Credit_Amount,Debit_Account,Debit_Amount,EntryType,Invoice_Number,Comments)VALUES(?,?,?,?,?,?,?,?)`;
+        db.run(invoice_sql, [
+          data.Invoice_Number.split("-", 1),
+          data.Invoice_Number.slice(-5),
           data.Invoice_Number,
           data.Invoice_Type,
           data.Invoice_Date,
@@ -91,7 +92,9 @@ module.exports = {
           data.TotalGst_Amount,
           data.Total_Amount,
           data.InvoiceItems,
-          data.Invoice_Date,
+        ]);
+        db.run(payments_sql, [
+          data.EntryDate,
           data.Credit_Account,
           data.Credit_Amount,
           data.Debit_Account,
@@ -99,14 +102,13 @@ module.exports = {
           data.EntryType,
           data.InvoiceNumber,
           data.Comments,
-        ],
-        (error, results, fields) => {
-          if (error) {
-            callback(error);
-          }
-          return callback(null, results);
+        ]);
+        db.run("commit");
+        if (error) {
+          callback(error);
         }
-      );
+        return callback(null, results);
+      });
     }
   },
 

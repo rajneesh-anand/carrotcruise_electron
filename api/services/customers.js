@@ -1,9 +1,10 @@
 const pool = require("../config/database");
+const db = require("./sqliteConfig");
 
 module.exports = {
   create: (data, callBack) => {
-    // console.log(data);
-    pool.query(
+    console.log(data);
+    db.run(
       `insert into customers(Prefix,first_name, last_name,address_line_one, address_line_two,city,state,pincode,mobile,phone,gstin,email,pan) 
                 values(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [
@@ -26,7 +27,7 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results);
-      },
+      }
     );
   },
   getUserByUserEmail: (email, callBack) => {
@@ -38,20 +39,18 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results[0]);
-      },
+      }
     );
   },
   fetchCustomerById: (id, callBack) => {
-    pool.query(
-      `select * from customers where id = ?`,
-      [id],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results[0]);
-      },
-    );
+    console.log(id);
+    db.get(`select * from customers where id = ?`, [id], (error, results) => {
+      console.log(results);
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
+    });
   },
   fetchCustomers: (callBack) => {
     pool.query(
@@ -62,12 +61,13 @@ module.exports = {
           callBack(error);
         }
         return callBack(null, results);
-      },
+      }
     );
   },
   setCustomer: (data, callBack) => {
-    pool.query(
-      `update customers set first_name=?, last_name=?, address_line_one=?, email=?, address_line_two=?, mobile=?, phone=?, state=?, gstin=?, city=? where id = ?`,
+    console.log(data);
+    db.run(
+      `update customers set first_name=?, last_name=?, address_line_one=?, email=?, address_line_two=?, mobile=?, phone=?, state=?, gstin=?, city=?, pan=? where id = ?`,
       [
         data.first_name,
         data.last_name,
@@ -79,26 +79,15 @@ module.exports = {
         data.state,
         data.gstin,
         data.city,
+        data.pan,
         data.id,
       ],
-      (error, results, fields) => {
+      (error, results) => {
         if (error) {
           callBack(error);
         }
-        return callBack(null, results[0]);
-      },
-    );
-  },
-  deleteUser: (data, callBack) => {
-    pool.query(
-      `delete from registration where id = ?`,
-      [data.id],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results[0]);
-      },
+        return callBack(null, results);
+      }
     );
   },
 };

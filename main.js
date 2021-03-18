@@ -585,7 +585,7 @@ ipcMain.on("create:itemwindow", (event, fileName) => {
 
   let win = new BrowserWindow({
     resizable: false,
-    height: 510,
+    height: 410,
     width: 600,
     frame: false,
     title: "Reports",
@@ -597,7 +597,7 @@ ipcMain.on("create:itemwindow", (event, fileName) => {
     },
   });
 
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   win.loadURL(modalPath);
 
@@ -723,8 +723,7 @@ ipcMain.on("create:invoiceWindow", (event, fileName) => {
   });
 });
 
-//------- Invoice Section ---------
-//----------nvoice Edit------------
+// Invoice edit window
 
 const fetchInvoiceDataByID = async (id) => {
   console.log(id);
@@ -775,7 +774,7 @@ ipcMain.on("invoice:edit", (event, args) => {
   });
 });
 
-//-----------------------
+// Invoice window
 
 ipcMain.on("add:invoice", async function (event, args) {
   await axios
@@ -798,7 +797,7 @@ ipcMain.on("add:invoice", async function (event, args) {
     });
 });
 
-// Payment Window
+// Payment window
 
 ipcMain.on("create:paymentWindow", (event, fileName) => {
   const modalPath = path.join(
@@ -835,7 +834,7 @@ ipcMain.on("create:paymentWindow", (event, fileName) => {
   });
 });
 
-// Payment Edit Window
+// Payment edit window
 
 const fetchPaymentDataByID = async (id) => {
   return await axios
@@ -892,7 +891,7 @@ ipcMain.on("payment:edit", function (event, args) {
   });
 });
 
-//Receive Edit Window
+// Receive edit window
 
 const fetchReceiveDataByID = async (id) => {
   return await axios
@@ -1004,7 +1003,7 @@ ipcMain.on("journal:edit", function (event, args) {
   });
 });
 
-// Journal Window
+// Journal window
 
 ipcMain.on("create:journalWindow", (event, fileName) => {
   const modalPath = path.join(
@@ -1041,7 +1040,7 @@ ipcMain.on("create:journalWindow", (event, fileName) => {
   });
 });
 
-// Receipt Window
+// Receipt window
 
 ipcMain.on("create:receiptWindow", (event, fileName) => {
   const modalPath = path.join(
@@ -1078,9 +1077,7 @@ ipcMain.on("create:receiptWindow", (event, fileName) => {
   });
 });
 
-//-----------------------
-
-//---Account ---
+// Account window
 
 ipcMain.on("create:accountWindow", (event, fileName) => {
   const modalPath = path.join(

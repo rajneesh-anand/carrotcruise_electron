@@ -1,8 +1,8 @@
 const { create, getUserByUserEmail, getUsers } = require("../services/users");
-
 const { hashSync, genSaltSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const pool = require("../config/database");
+const db = require("../services/sqliteConfig");
 
 module.exports = {
   createUser: (req, res) => {
@@ -42,7 +42,7 @@ module.exports = {
             data: results,
           });
         });
-      },
+      }
     );
   },
   login: (req, res) => {
@@ -86,7 +86,7 @@ module.exports = {
     const salt = genSaltSync(10);
     data.password = hashSync(data.password, salt);
 
-    pool.query(
+    db.all(
       "SELECT COUNT(*) AS cnt FROM users WHERE email= ?",
       [args.email],
       (err, results) => {
@@ -100,7 +100,7 @@ module.exports = {
             message: "User does not exists, Contact Admin !",
           });
         } else {
-          pool.query(
+          db.run(
             `update users set password=? where email=?`,
             [data.password, data.email],
             (error, results, fields) => {
@@ -113,10 +113,10 @@ module.exports = {
                   message: "Password updated successfully",
                 });
               }
-            },
+            }
           );
         }
-      },
+      }
     );
   },
   getUserByUserId: (req, res) => {

@@ -7,6 +7,7 @@ const printInvoiceAPICall = (id) => {
       },
     })
     .then((response) => {
+      console.log(response.data);
       return response.data;
     })
     .catch((error) => {
@@ -17,10 +18,10 @@ const printInvoiceAPICall = (id) => {
 function printInvoicePdf(invoice_id) {
   printInvoiceAPICall(invoice_id).then(async (result) => {
     if (result.message === "success") {
-      let invResults = result.data[0];
+      let invResults = result.data;
       console.log(invResults);
-      let gst_rate =
-        invResults.CGST_Rate + invResults.IGST_Rate + invResults.SGST_Rate;
+      // let gst_rate =
+      //   invResults.CGST_Rate + invResults.IGST_Rate + invResults.SGST_Rate;
       let currencyCode = "&#x20B9;";
       // switch (currencyCode) {
       //   case 1:
@@ -68,22 +69,22 @@ function printInvoicePdf(invoice_id) {
         InvoiceItems: JSON.parse(invResults.Invoice_Items),
         BaseAmount: invResults.Base_Amount.toFixed(2),
         TotalAmount: invResults.TOTAL_Amount.toFixed(2),
-        CGST: invResults.CGST_Rate === 0 ? false : invResults.CGST_Rate,
-        SGST: invResults.SGST_Rate === 0 ? false : invResults.SGST_Rate,
-        CGSTAmt:
-          invResults.CGST_Amount === 0
-            ? false
-            : invResults.CGST_Amount.toFixed(2),
-        SGSTAmt:
-          invResults.SGST_Amount === 0
-            ? false
-            : invResults.SGST_Amount.toFixed(2),
-        GST_Amt:
-          invResults.TOTAL_GST_Amount === 0
-            ? false
-            : invResults.TOTAL_GST_Amount.toFixed(2),
+        // CGST: invResults.CGST_Rate === 0 ? false : invResults.CGST_Rate,
+        // SGST: invResults.SGST_Rate === 0 ? false : invResults.SGST_Rate,
+        // CGSTAmt:
+        //   invResults.CGST_Amount === 0
+        //     ? false
+        //     : invResults.CGST_Amount.toFixed(2),
+        // SGSTAmt:
+        //   invResults.SGST_Amount === 0
+        //     ? false
+        //     : invResults.SGST_Amount.toFixed(2),
+        // GST_Amt:
+        //   invResults.TOTAL_GST_Amount === 0
+        //     ? false
+        //     : invResults.TOTAL_GST_Amount.toFixed(2),
 
-        GSTRate: gst_rate === 0 ? false : gst_rate,
+        // GSTRate: gst_rate === 0 ? false : gst_rate,
         first_name: invResults.first_name,
         address: invResults.address_line_one,
         city: invResults.city,

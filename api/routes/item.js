@@ -7,7 +7,6 @@ const {
   updateItem,
   fetchItemNames,
 } = require("../controllers/item");
-
 router.post("/additem", createItem);
 router.get("/items", fetchItems);
 router.get("/item/:id", fetchItemById);

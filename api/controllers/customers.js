@@ -1,4 +1,6 @@
 const NodeTable = require("../services/nodetable");
+const NodeTableSqlite = require("../services/nodetable_sqlite");
+const db = require("../services/sqliteConfig");
 const {
   create,
   fetchCustomers,
@@ -10,30 +12,25 @@ const pool = require("../config/database");
 module.exports = {
   createCustomer: (req, res) => {
     const body = req.body;
-
-    const reg = {
-      first_name: body.first_name,
-      email: body.email,
-    };
-
-    pool.query(
-      "SELECT COUNT(*) AS cnt FROM customers WHERE first_name = ? and email= ?",
-      [reg.first_name, reg.email],
-      (err, data) => {
+    first_name = body.first_name;
+    city = body.city;
+    console.log(body);
+    try {
+      let sql = `SELECT COUNT(*) AS cnt FROM customers WHERE first_name = ? and city= ?`;
+      db.all(sql, [first_name, city], (err, row) => {
+        console.log(row);
         if (err) {
-          return res.status(403).json({
-            error: err,
+          return res.json({
+            message: err.message,
           });
         }
-        if (data[0].cnt > 0) {
+        if (row[0].cnt > 0) {
           return res.status(403).json({
             message: "Customer already exists !",
           });
         }
-
         create(body, (err, results) => {
           if (err) {
-            console.log(err);
             return res.status(500).json({
               success: 0,
               message: "Database connection error !",
@@ -44,12 +41,15 @@ module.exports = {
             data: results,
           });
         });
-      }
-    );
+      });
+    } catch (err) {
+      console.log(err);
+    }
   },
+
   getCustomerslist: (req, res) => {
-    pool.query(
-      `SELECT concat(Prefix,id) as id, first_name,mobile FROM customers`,
+    db.all(
+      `SELECT (Prefix || id) as id, first_name,mobile FROM customers`,
       [],
       (error, results) => {
         if (error) {
@@ -69,7 +69,7 @@ module.exports = {
 
   findCustomers: (req, res) => {
     const query =
-      "SELECT concat(c.Prefix,c.id) as id,c.first_name,c.last_name,c.address_line_one,c.address_line_two,c.city,c.pincode,c.mobile,c.email,c.phone,c.gstin,c.pan,s.State_Name as state FROM customers c, states s where c.state =s.id";
+      "SELECT (c.Prefix || c.id) as id,c.first_name,c.last_name,c.address_line_one,c.address_line_two,c.city,c.pincode,c.mobile,c.email,c.phone,c.gstin,c.pan,s.State_Name as state FROM customers c, states s where c.state =s.id";
 
     pool.query(query, [], (err, data) => {
       if (err) {
@@ -81,8 +81,7 @@ module.exports = {
     });
   },
 
-  getCustomers: (req, res) => {
-    // Get the query string paramters sent by Datatable
+  fetchCustomerList: (req, res) => {
     const requestQuery = req.query;
 
     let columnsMap = [
@@ -110,11 +109,11 @@ module.exports = {
 
     // Custome SQL query
     const query =
-      "SELECT concat(c.Prefix,c.id) as id,c.first_name,c.last_name,c.address_line_one,c.address_line_two,c.city,c.pincode,c.mobile,c.email,c.phone,c.gstin,c.pan,s.State_Name as state FROM customers c, states s where c.state =s.id";
+      "SELECT (c.Prefix || c.id) as id,c.first_name,c.last_name,c.address_line_one,c.address_line_two,c.city,c.pincode,c.mobile,c.email,c.phone,c.gstin,c.pan,s.State_Name as state FROM customers c, states s where c.state =s.id";
     // NodeTable requires table's primary key to work properly
     const primaryKey = "id";
 
-    const nodeTable = new NodeTable(
+    const nodeTable = new NodeTableSqlite(
       requestQuery,
       query,
       primaryKey,
@@ -126,7 +125,7 @@ module.exports = {
         console.log(err);
         return;
       }
-      // Directly send this data as output to Datatable
+
       res.send(data);
     });
 
@@ -190,6 +189,7 @@ module.exports = {
 
   updateCustomer: (req, res) => {
     const body = req.body;
+    console.log(body);
     setCustomer(body, (err, results) => {
       if (err) {
         console.log(err);
@@ -205,7 +205,7 @@ module.exports = {
   },
 
   getStates: (req, res) => {
-    pool.query("SELECT id,State_Name from states", [], (err, results) => {
+    db.all("SELECT id,State_Name from states", [], (err, results) => {
       if (err) {
         return res.status(403).json({
           error: err,

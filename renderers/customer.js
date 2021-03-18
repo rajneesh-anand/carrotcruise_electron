@@ -68,7 +68,7 @@ form.addEventListener("submit", (event) => {
       mobile: data.get("mobile"),
       gstin: data.get("gstin").toUpperCase(),
       email: data.get("email"),
-      pan: data.get("pan"),
+      pan: data.get("pan").toUpperCase(),
     };
 
     axios

@@ -1,15 +1,16 @@
 const pool = require("../config/database");
+const db = require("../services/sqliteConfig");
 
 exports.generatePdf = (req, res) => {
   const Invoice_Number = req.params.id;
-  pool.query(
-    "SELECT i.Invoice_Number,i.Invoice_Date,i.Base_Amount,i.IGST_Rate,i.CGST_Rate,i.SGST_Rate,i.IGST_Amount,i.CGST_Amount,i.SGST_Amount,i.TOTAL_GST_Amount,i.TOTAL_Amount,i.Invoice_Items,c.first_name,c.address_line_one,c.city,c.gstin,c.pincode,s.State_Name from invoice i, customers c, states s where Invoice_Number =? and i.Customer_Id =concat(c.Prefix,c.id) and c.state =s.id",
+  db.get(
+    "SELECT i.Invoice_Number,i.Invoice_Date,i.Base_Amount,i.IGST_Rate,i.CGST_Rate,i.SGST_Rate,i.IGST_Amount,i.CGST_Amount,i.SGST_Amount,i.TOTAL_GST_Amount,i.TOTAL_Amount,i.Invoice_Items,c.first_name,c.address_line_one,c.city,c.gstin,c.pincode,s.State_Name from invoices i, customers c, states s where Invoice_Number =? and i.Customer_Id =(c.Prefix || c.id) and c.state =s.id",
     [Invoice_Number],
     (error, results) => {
+      console.log(results);
       if (error) {
         return res.status(403).json({
-          error: error,
-          message: `Error : ${error}`,
+          message: error,
         });
       } else {
         return res.status(200).json({

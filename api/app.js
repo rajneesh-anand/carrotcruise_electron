@@ -51,14 +51,14 @@ app.use("/api", itemRouter);
 
 process.on("SIGTERM", () => {
   app.close(() => {
-    console.log("Server Closed");
+    console.log("server closed");
   });
 });
 
 const port = process.env.PORT || 3000;
 
 app.listen(port, () =>
-  console.log(` API SERVER RUNNING ON ${process.env.DB_HOST_SERVER}:${port}`)
+  console.log(`API SERVER RUNNING ON ${process.env.DB_HOST_SERVER}:${port}`)
 );
 
 module.exports = app;

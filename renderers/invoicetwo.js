@@ -16,6 +16,16 @@ handlebars.registerHelper("ifEqual", function (a, b, options) {
   }
 });
 
+handlebars.registerHelper("halfValue", function (a) {
+  let s = a / 2;
+  return s;
+});
+
+handlebars.registerHelper("halfValueAmount", function (a) {
+  let s = a / 2;
+  return s.toFixed(2);
+});
+
 handlebars.registerHelper("formatDate", function (dateString) {
   let event = new Date(`${dateString}`);
   let month = event.getMonth();
@@ -133,15 +143,7 @@ function isNumberKey(evt, obj) {
 }
 
 ipcRenderer.on("sendInvoiceNumber", (event, args) => {
-  let date = new Date();
-
-  let extractInvoice = args[0];
-
-  let generatedInvoice = extractInvoice["@Invoice_Number"]
-    ? extractInvoice["@Invoice_Number"]
-    : `CC${date.getFullYear()}${date.getMonth() + 1}-00001`;
-
-  document.getElementById("invoice_no").value = generatedInvoice;
+  document.getElementById("invoice_no").value = args;
 });
 
 const addItem = document.getElementById("btnInsertNewRow");
@@ -174,12 +176,14 @@ function itemNames(cb) {
     });
 }
 
-function findGstRate(selectedValue) {
-  console.log(selectedValue);
+function findGstRate(selectedValue, rowIndex) {
+  var tableRows = document.getElementById("itemTable").rows;
+  console.log(selectedValue, rowIndex);
   const result = itemList.find(({ Item_Name }) => Item_Name === selectedValue);
   let gstRate = parseFloat(result.Gst_Rate.slice(0, -1));
   console.log(gstRate);
-  return gstRate.toFixed(2);
+  tableRows[rowIndex].cells[4].children[0].value = gstRate;
+  GetTotal(rowIndex);
 }
 
 function addRow(trIndex) {
@@ -187,21 +191,23 @@ function addRow(trIndex) {
   let tr = document.createElement("tr");
   tr.innerHTML =
     "<td>" +
-    `<select id="itemSelect" class="browser-default itemSelect" onchange="findGstRate(this.value)">  
+    `<select id="itemSelect" class="browser-default itemSelect" onchange="findGstRate(this.value,${trIndex})">
+
     ${itemList.map(
       (item) => `<option value='${item.Item_Name}'>${item.Item_Name}</option>`
     )}  
     </select>` +
     "</td>" +
     "<td>" +
-    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${trIndex}) />` +
+    `<input type=text onkeypress= 'return ValidateNumbers(event)' onkeyup=GetTotal(${trIndex}) />` +
     "</td>" +
     "<td>" +
-    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${trIndex}) />` +
+    `<input type=text 	onkeypress="return isNumberKey(event,this);"  onkeyup=GetTotal(${trIndex}) />` +
     "</td>" +
     "<td>" +
     "</td>" +
     "<td>" +
+    `<input type=text onkeypress= 'return ValidateNumbers(event)' onkeyup=GetTotal(${trIndex}) />` +
     "</td>" +
     "<td>" +
     "</td>" +
@@ -226,20 +232,15 @@ function removeRow(oButton) {
 }
 
 function GetTotal(rowIndex) {
-  console.log(rowIndex);
   var tableRows = document.getElementById("itemTable").rows;
   let el = tableRows[rowIndex].children;
-  let itemName = el[0].children[0].value === "" ? 0 : el[0].children[0].value;
-  console.log(itemName);
-  let gstRate = findGstRate(itemName);
-  console.log(gstRate);
   let rQnty = el[1].children[0].value === "" ? 0 : el[1].children[0].value;
   let rRate = el[2].children[0].value === "" ? 0 : el[2].children[0].value;
+  let rGSTRate = el[4].children[0].value === "" ? 0 : el[4].children[0].value;
   let rTotal = parseFloat(rQnty) * parseFloat(rRate);
-  let rGST = (parseFloat(rTotal) * parseFloat(gstRate)) / 100;
-  tableRows[rowIndex].cells[4].innerHTML = gstRate;
-  tableRows[rowIndex].cells[5].innerHTML = rGST.toFixed(2);
+  let rGST = (parseFloat(rTotal) * parseFloat(rGSTRate)) / 100;
   tableRows[rowIndex].cells[3].innerHTML = rTotal.toFixed(2);
+  tableRows[rowIndex].cells[5].innerHTML = rGST.toFixed(2);
   setInvoiceAmount();
 }
 
@@ -280,13 +281,13 @@ function table_to_array(table_id) {
       let rQnty = el[1].children[0].value;
       let rRate = el[2].children[0].value;
       let rTotal = el[3].innerText;
-      let rGstRate = el[4].innerText;
+      let rGstRate = el[4].children[0].value;
       let rGst = el[5].innerText;
 
       let rowItem = {
         itemName: itemName,
         rQnty: rQnty,
-        rRate: rRate,
+        rRate: parseFloat(rRate).toFixed(2),
         rTotal: parseFloat(rTotal).toFixed(2),
         rGst: parseFloat(rGst).toFixed(2),
         rGstRate: parseFloat(rGstRate),
@@ -302,7 +303,7 @@ function table_to_array(table_id) {
       let rQnty = el[1].children[0].value;
       let rRate = el[2].children[0].value;
       let rTotal = el[3].innerText;
-      let rGstRate = el[4].innerText;
+      let rGstRate = el[4].children[0].value;
       let rGst = el[5].innerText;
 
       let rowItem = {

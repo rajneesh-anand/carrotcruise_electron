@@ -1,15 +1,4 @@
-const path = require("path");
-const fs = require("fs");
-var sqlite3 = require("sqlite3").verbose();
-const db_path = path.join(__dirname, "../../neodb.db");
-
-var db = new sqlite3.Database(db_path, sqlite3.OPEN_READWRITE, (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log("Connected to database successfully");
-});
-
+const db = require("./sqliteConfig");
 class NodeTableSqlite {
   constructor(request, table, primaryKey, columns) {
     this.request = request;

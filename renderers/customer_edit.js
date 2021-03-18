@@ -66,7 +66,7 @@ form.addEventListener("submit", function (event) {
       mobile: data.get("mobile"),
       gstin: data.get("gstin").toUpperCase(),
       email: data.get("email"),
-      pan: data.get("pan"),
+      pan: data.get("pan").toUpperCase(),
     };
 
     // console.log(customerData);
@@ -86,7 +86,6 @@ form.addEventListener("submit", function (event) {
       .then((response) => {
         const window = remote.getCurrentWindow();
         window.close();
-        // alert(response.data.message);
       })
       .catch((error) => {
         alert(error.response.data.message);

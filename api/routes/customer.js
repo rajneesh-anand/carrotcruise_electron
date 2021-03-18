@@ -4,7 +4,7 @@ const {
   createCustomer,
   login,
   getCustomerById,
-  getCustomers,
+  fetchCustomerList,
   updateCustomer,
   deleteUser,
   getStates,
@@ -12,7 +12,7 @@ const {
   getCustomerslist,
   findCustomers,
 } = require("../controllers/customers");
-router.get("/customers", getCustomers);
+router.get("/customerlist", fetchCustomerList);
 router.get("/getcustomers", findCustomers);
 router.post("/customer", createCustomer);
 router.get("/customer/:id", getCustomerById);

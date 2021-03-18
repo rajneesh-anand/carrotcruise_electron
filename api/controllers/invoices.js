@@ -1,5 +1,7 @@
 const pool = require("../config/database");
 const NodeTable = require("../services/nodetable");
+const NodeTableSqlite = require("../services/nodetable_sqlite");
+const db = require("../services/sqliteConfig");
 
 const {
   create,
@@ -8,19 +10,42 @@ const {
   createItemInvoice,
   updateInvoice,
 } = require("../services/invoices");
-
+function padLeadingZeros(num, size) {
+  var s = num + "";
+  while (s.length < size) s = "0" + s;
+  return s;
+}
 module.exports = {
   getInvoiceNumber: (req, res) => {
-    pool.query(`call GenerateInvoice()`, [], (err, data) => {
-      if (err) {
-        return res.status(403).json({
-          error: err,
-        });
+    db.get(
+      `SELECT MAX(Inv_Suffix) AS Invoice_Number FROM invoices;`,
+      [],
+      (err, data) => {
+        if (err) {
+          return res.status(403).json({
+            error: err,
+          });
+        }
+        if (data.Invoice_Number) {
+          let number = padLeadingZeros(data.Invoice_Number + 1, 5);
+          let date = new Date();
+          let Invoice_Number = `CC${date.getFullYear()}${
+            date.getMonth() + 1
+          }-${number}`;
+          return res.status(200).json({
+            data: Invoice_Number,
+          });
+        } else {
+          let date = new Date();
+          let Invoice_Number = `CC${date.getFullYear()}${
+            date.getMonth() + 1
+          }-00001`;
+          return res.status(200).json({
+            data: Invoice_Number,
+          });
+        }
       }
-      return res.status(200).json({
-        data: data[0],
-      });
-    });
+    );
   },
   createInvoice: (req, res) => {
     const body = req.body;
@@ -64,11 +89,11 @@ module.exports = {
   insertInvoiceItems: (req, res) => {
     const body = req.body;
     let Invoice_Number = body.Invoice_Number;
-
-    pool.query(
-      "SELECT COUNT(*) AS cnt FROM invoice WHERE Invoice_Number = ? ",
+    db.all(
+      "SELECT COUNT(*) AS cnt FROM invoices WHERE Invoice_Number = ? ",
       [Invoice_Number],
       (err, data) => {
+        console.log(data);
         if (err) {
           return res.status(403).json({
             error: err,
@@ -190,8 +215,8 @@ module.exports = {
 
   findInvoiceRecords: (req, res) => {
     const query =
-      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,c.first_name as Agent_Name FROM customers c, invoice i where i.Customer_Id =concat(c.Prefix,c.id)";
-    pool.query(query, [], (err, data) => {
+      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,c.first_name as Agent_Name FROM customers c, invoice i where i.Customer_Id =(c.Prefix || c.id)";
+    db.all(query, [], (err, data) => {
       if (err) {
         return res.status(403).json({
           error: err,
@@ -201,13 +226,11 @@ module.exports = {
     });
   },
 
-  getInvoices: (req, res, next) => {
+  fetchInvoiceList: (req, res, next) => {
     const requestQuery = req.query;
-    // Custome SQL query
-    const query =
-      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,i.Base_Amount, i.TOTAL_GST_Amount,i.TOTAL_Amount,c.first_name as Agent_Name FROM customers c, invoice i where i.Customer_Id =concat(c.Prefix,c.id)";
 
-    // Get the query string paramters sent by Datatable
+    const query =
+      "SELECT i.Invoice_Id,i.Invoice_Number,i.Invoice_Date,i.Base_Amount, i.TOTAL_GST_Amount,i.TOTAL_Amount,c.first_name as Agent_Name FROM customers c, invoices i where i.Customer_Id =(c.Prefix || c.id)";
 
     let columnsMap = [
       {
@@ -243,7 +266,7 @@ module.exports = {
     // NodeTable requires table's primary key to work properly
     const primaryKey = "Invoice_Id";
 
-    const nodeTable = new NodeTable(
+    const nodeTable = new NodeTableSqlite(
       requestQuery,
       query,
       primaryKey,
@@ -255,7 +278,7 @@ module.exports = {
         console.log(err);
         return;
       }
-      // Directly send this data as output to Datatable
+
       res.send(data);
     });
   },
