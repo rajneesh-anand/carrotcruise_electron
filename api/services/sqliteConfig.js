@@ -28,7 +28,7 @@ function findDBPath(disks) {
   var dbFilePath = path.join(__dirname, "../../neodb.db");
   disks.map((disk) => {
     if (disk.filesystem === "Removable Disk") {
-      dbFilePath = `${disk.mounted}\\cruisecarrot\\data\\neodb.db`;
+      dbFilePath = `${disk.mounted}\\accounts\\data\\neodb.db`;
     }
   });
   return dbFilePath;

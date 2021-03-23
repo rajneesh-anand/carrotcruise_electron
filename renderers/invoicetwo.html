@@ -1,222 +1,183 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../assets/fonts/material-icons.css" />
-    <link rel="stylesheet" href="../assets/css/materialize.min.css" />
-    <style>
-      .input-field {
-        margin-bottom: 0px !important;
-      }
-      input {
-        text-align: center;
-      }
-      td {
-        padding: 8px 5px;
-        text-align: center;
-        color: rgb(3, 19, 11);
-        font-weight: 600;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
-      #itemTable th {
-        text-align: center !important;
-        border-radius: 0 !important;
-        background-color: lightgray;
-      }
-      #calcTable th {
-        text-align: center !important;
-        border-radius: 0 !important;
-        background-color: rgb(208, 224, 240);
-      }
-      #calcTable {
-        background-color: aliceblue;
-      }
-      tr {
-        border: none;
-      }
-      table#valueInput td {
-        text-align: right;
-      }
-      .print-wrap {
-        width: 500px;
-      }
 
-      .customInput {
-        display: block !important;
-        width: 2rem !important;
-        height: 2rem !important;
-        padding-left: 15px !important;
-        margin-left: 15px !important;
-        border: 1px solid rgb(0, 0, 0);
-        transition: all 1s;
-        border-radius: 0.25rem !important;
-        box-shadow: none;
-      }
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../assets/fonts/material-icons.css" />
+  <link rel="stylesheet" href="../assets/css/materialize.min.css" />
+  <style>
+    .input-field {
+      margin-bottom: 0px !important;
+    }
 
-      label {
-        color: #131010 !important;
-      }
-    </style>
-  </head>
+    input {
+      text-align: center;
+    }
 
-  <body onkeydown="return (event.keyCode!=13)" style="width: 100%">
-    <div
-      class="row"
-      style="display: flex; padding-left: 1rem; padding-right: 1rem"
-    >
-      <h6 class="flow-text teal-text text-darken-3">NEW INVOICE</h6>
+    td {
+      padding: 8px 5px;
+      text-align: center;
+      color: rgb(3, 19, 11);
+      font-weight: 600;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-      <a
-        class="btn-flat"
-        id="btnClose"
-        style="margin-left: auto; padding-top: 1rem"
-      >
-        <i class="material-icons right">close</i></a
-      >
-    </div>
-    <div class="row" style="margin-top: 15px">
-      <form method="post" class="col s12">
-        <div class="row" style="margin-bottom: 0px !important">
-          <div class="input-field col s2">
-            <i class="material-icons prefix">arrow_forward</i>
-            <input
-              placeholder=""
-              id="invoice_no"
-              type="text"
-              class="validate"
-              name="invoice_no"
-              readonly
-            />
-            <label for="invoice_no">INVOICE NO.</label>
-          </div>
+    #itemTable th {
+      text-align: center !important;
+      border-radius: 0 !important;
+      background-color: lightgray;
+    }
 
-          <div class="input-field col s2">
-            <i class="material-icons prefix">date_range</i>
-            <input
-              id="invoice_date"
-              type="text"
-              name="invoice_date"
-              class="datepicker"
-              required
-            />
-            <label for="invoice_date">INVOICE DATE</label>
-          </div>
+    #calcTable th {
+      text-align: center !important;
+      border-radius: 0 !important;
+      background-color: rgb(208, 224, 240);
+    }
 
-          <div class="col s3">
-            <label>INVOICE TYPE </label>
-            <select name="invoicetype" class="browser-default invoicetype">
-              <option value="CREDIT INVOICE">CREDIT INVOICE</option>
-              <option value="CASH INVOICE">CASH INVOICE</option>
-            </select>
-          </div>
+    #calcTable {
+      background-color: aliceblue;
+    }
 
-          <div class="col s5">
-            <label>M/S NAME *</label>
-            <select name="agent" class="browser-default agentName">
-              <option value="" disabled selected>Select Agent</option>
-            </select>
-          </div>
+    tr {
+      border: none;
+    }
+
+    table#valueInput td {
+      text-align: right;
+    }
+
+    .print-wrap {
+      width: 500px;
+    }
+
+    .customInput {
+      display: block !important;
+      width: 2rem !important;
+      height: 2rem !important;
+      padding-left: 15px !important;
+      margin-left: 15px !important;
+      border: 1px solid rgb(0, 0, 0);
+      transition: all 1s;
+      border-radius: 0.25rem !important;
+      box-shadow: none;
+    }
+
+    label {
+      color: #131010 !important;
+    }
+  </style>
+</head>
+
+<body onkeydown="return (event.keyCode!=13)" style="width: 100%">
+  <div class="row" style="display: flex; padding-left: 1rem; padding-right: 1rem">
+    <h6 class="flow-text teal-text text-darken-3">NEW INVOICE</h6>
+
+    <a class="btn-flat" id="btnClose" style="margin-left: auto; padding-top: 1rem">
+      <i class="material-icons right">close</i></a>
+  </div>
+  <div class="row" style="margin-top: 15px">
+    <form method="post" class="col s12">
+      <div class="row" style="margin-bottom: 0px !important">
+        <div class="input-field col s2">
+          <i class="material-icons prefix">arrow_forward</i>
+          <input placeholder="" id="invoice_no" type="text" class="validate" name="invoice_no" readonly />
+          <label for="invoice_no">INVOICE NO.</label>
         </div>
 
-        <div
-          class="row"
-          style="margin-bottom: 0px !important; margin-top: 10px; height: 60vh"
-        >
-          <div class="col s12">
-            <table id="itemTable" class="stripped">
-              <tr>
-                <th>Particulars / Item Name</th>
-                <th style="width: 80px">Quantity*</th>
-                <th style="width: 120px">Rate / Price *</th>
-                <th style="width: 120px">Amount</th>
-                <th style="width: 60px">GST %</th>
-                <th style="width: 120px">GST Amount</th>
-                <th style="width: 15px"></th>
-              </tr>
-            </table>
+        <div class="input-field col s2">
+          <i class="material-icons prefix">date_range</i>
+          <input id="invoice_date" type="text" name="invoice_date" class="datepicker" required />
+          <label for="invoice_date">INVOICE DATE</label>
+        </div>
 
-            <div style="text-align: end">
-              <button
-                class="btn-small waves-effect waves-light"
-                id="btnInsertNewRow"
-              >
-                ADD MORE ITEM
-              </button>
-            </div>
+        <div class="col s3">
+          <label>INVOICE TYPE </label>
+          <select name="invoicetype" class="browser-default invoicetype">
+            <option value="CREDIT INVOICE">CREDIT INVOICE</option>
+            <option value="CASH INVOICE">CASH INVOICE</option>
+          </select>
+        </div>
+
+        <div class="col s5">
+          <label>M/S NAME *</label>
+          <select name="agent" class="browser-default agentName">
+            <option value="" disabled selected>Select Agent</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom: 0px !important; margin-top: 10px; height: 60vh">
+        <div class="col s12">
+          <table id="itemTable" class="stripped">
+            <tr>
+              <th>Particulars / Item Name</th>
+              <th style="width: 90px">HSN </th>
+              <th style="width: 80px">Quantity*</th>
+              <th style="width: 120px">Rate / Price *</th>
+              <th style="width: 120px">Amount</th>
+              <th style="width: 60px">GST %</th>
+              <th style="width: 120px">GST Amount</th>
+              <th style="width: 15px"></th>
+            </tr>
+          </table>
+
+          <div style="text-align: end">
+            <button class="btn-small waves-effect waves-light" id="btnInsertNewRow">
+              ADD MORE ITEM
+            </button>
           </div>
         </div>
-        <div class="row" style="background-color: #ece2e2">
-          <div
-            class="col s3"
-            style="display: flex; justify-content: space-evenly"
-          >
-            <p>TAXABLE AMOUNT</p>
-            <p id="TotalTaxableAmount"></p>
-          </div>
-          <div
-            class="col s3"
-            style="display: flex; justify-content: space-evenly"
-          >
-            <p>TOTAL GST</p>
-            <p id="totalGstAmount"></p>
-          </div>
-          <div
-            class="col s3"
-            style="display: flex; justify-content: space-evenly"
-          >
-            <p>TOTAL AMOUNT</p>
-            <p id="totalAmount"></p>
-          </div>
+      </div>
+      <div class="row" style="background-color: #ece2e2">
+        <div class="col s3" style="display: flex; justify-content: space-evenly">
+          <p>TAXABLE AMOUNT</p>
+          <p id="TotalTaxableAmount"></p>
+        </div>
+        <div class="col s3" style="display: flex; justify-content: space-evenly">
+          <p>TOTAL GST</p>
+          <p id="totalGstAmount"></p>
+        </div>
+        <div class="col s3" style="display: flex; justify-content: space-evenly">
+          <p>TOTAL AMOUNT</p>
+          <p id="totalAmount"></p>
+        </div>
 
-          <div
-            class="col s3"
-            style="display: flex; justify-content: space-evenly"
-          >
-            <div style="padding-top: 6px">
-              <button
-                class="btn waves-effect waves-light"
-                type="submit"
-                id="btnSave"
-                name="action"
-              >
-                SAVE
-              </button>
-            </div>
-            <div style="padding-top: 6px">
-              <button class="btn waves-effect waves-light" id="btnNew">
-                ADD NEW
-              </button>
-            </div>
-            <div style="padding-top: 6px">
-              <button class="btn waves-effect waves-light" id="btnDownload">
-                DOWNLOAD
-              </button>
-            </div>
+        <div class="col s3" style="display: flex; justify-content: space-evenly">
+          <div style="padding-top: 6px">
+            <button class="btn waves-effect waves-light" type="submit" id="btnSave" name="action">
+              SAVE
+            </button>
+          </div>
+          <div style="padding-top: 6px">
+            <button class="btn waves-effect waves-light" id="btnNew">
+              ADD NEW
+            </button>
+          </div>
+          <div style="padding-top: 6px">
+            <button class="btn waves-effect waves-light" id="btnDownload">
+              DOWNLOAD
+            </button>
           </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
+  </div>
 
-    <script>
-      if (typeof module === "object") {
-        window.module = module;
-        module = undefined;
-      }
-    </script>
-    <script
-      type="text/javascript"
-      src="../assets/js/jquery-3.4.1.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="../assets/js/materialize.min.js"
-    ></script>
+  <script>
+    if (typeof module === "object") {
+      window.module = module;
+      module = undefined;
+    }
+  </script>
+  <script type="text/javascript" src="../assets/js/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="../assets/js/materialize.min.js"></script>
 
-    <script src="./invoicetwo.js"></script>
-    <script src="./invoicepdf.js"></script>
+  <script src="./invoicetwo.js"></script>
+  <script src="./invoicepdf.js"></script>
 
-    <script>
-      if (window.module) module = window.module;
-    </script>
-  </body>
+  <script>
+    if (window.module) module = window.module;
+  </script>
+</body>
+
 </html>

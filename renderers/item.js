@@ -23,13 +23,28 @@ function isNumberKey(evt, obj) {
   return true;
 }
 
-$(document).ready(function () {
-  $("select").formSelect();
+$(function () {
   const btnClose = document.getElementById("btnClose");
   btnClose.addEventListener("click", (event) => {
     const window = remote.getCurrentWindow();
     window.close();
   });
+
+  $(".datepicker").datepicker({
+    defaultDate: new Date(),
+    autoClose: true,
+    format: "dd mmm yyyy",
+    setDefaultDate: true,
+  });
+});
+
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "Escape":
+      const window = remote.getCurrentWindow();
+      window.close();
+      break;
+  }
 });
 
 const isvalid = () => {
@@ -51,6 +66,7 @@ form.addEventListener("submit", function (event) {
       name: data.get("item_name").toUpperCase(),
       gst_rate: data.get("entryType"),
       unit_price: parseFloat(data.get("rate")).toFixed(2),
+      hsn_code: data.get("hsn").toUpperCase(),
     };
 
     console.log(itemData);

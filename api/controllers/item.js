@@ -38,12 +38,16 @@ module.exports = {
         dt: 1,
       },
       {
-        db: "Unit_Price",
+        db: "HSN_Code",
         dt: 2,
       },
       {
-        db: "Gst_Rate",
+        db: "Unit_Price",
         dt: 3,
+      },
+      {
+        db: "Gst_Rate",
+        dt: 4,
       },
     ];
 
@@ -86,7 +90,7 @@ module.exports = {
 
   fetchItemNames: (req, res, next) => {
     const id = req.params.id;
-    let sql = `SELECT Item_Name, Gst_Rate from items ORDER BY Item_Name ASC`;
+    let sql = `SELECT Item_Name,HSN_Code, Gst_Rate from items ORDER BY Item_Name ASC`;
     db.all(sql, [], (err, row) => {
       if (err) {
         return res.json({
@@ -104,10 +108,10 @@ module.exports = {
   updateItem: (req, res, next) => {
     const data = req.body;
     console.log(data);
-    let sql = `UPDATE items SET Item_Name = ?,Gst_Rate=?,Unit_Price=? WHERE id = ?`;
+    let sql = `UPDATE items SET Item_Name = ?,HSN_Code=?,Gst_Rate=?,Unit_Price=? WHERE id = ?`;
     db.get(
       sql,
-      [data.name, data.gst_rate, data.unit_price, data.id],
+      [data.name, data.hsn_code, data.gst_rate, data.unit_price, data.id],
       (err, row) => {
         if (err) {
           return res.json({

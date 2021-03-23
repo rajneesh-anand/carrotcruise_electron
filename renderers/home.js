@@ -12,6 +12,7 @@ let dataTableRecords = [];
 let dataPath = null;
 
 handlebars.registerHelper("ifEqual", function (a, b, options) {
+  console.log(a, b)
   if (a === b) {
     return options.fn(this);
   }
@@ -529,7 +530,7 @@ invListButton.addEventListener("click", (event) => {
 
 // Company Info
 
-function generateCompanyInfo() {}
+function generateCompanyInfo() { }
 
 // No Records Found
 
@@ -981,6 +982,7 @@ function generateItemDataTable() {
 				<tr>
 					<th>ID</th>
 					<th>ITEM NAME</th>
+          <th>HSN CODE</th>
 					<th>UNIT PRICE</th>
 					<th>GST RATE</th>
 				

@@ -1,205 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>CRUISE CARROT</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../assets/css/materialize.min.css" />
-    <link rel="stylesheet" href="../assets/fonts/material-icons.css" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="../assets/css/jquery.dataTables.min.css" />
-    <link rel="stylesheet" href="../assets/css/buttons.dataTables.min.css" />
-    <link rel="stylesheet" href="../assets/css/select.dataTables.min.css" />
-  </head>
-  <body>
-    <header class="navbar-fixed">
-      <nav class="light-blue lighten-4">
-        <div class="nav-wrapper">
-          <a
-            href="#"
-            data-target="sidenav-1"
-            class="left sidenav-trigger show-on-medium-and-up"
-            id="test"
-            ><i class="large material-icons">menu</i></a
-          >
 
-          <!-- <a href="#" class="brand-logo"
+<head>
+  <meta charset="UTF-8" />
+  <title>CRUISE CARROT</title>
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet" /> -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/css/materialize.min.css" />
+  <link rel="stylesheet" href="../assets/fonts/material-icons.css" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="../assets/css/buttons.dataTables.min.css" />
+  <link rel="stylesheet" href="../assets/css/select.dataTables.min.css" />
+</head>
+
+<body>
+  <header class="navbar-fixed">
+    <nav class="teal darken-4">
+      <div style="display: flex; justify-content: space-between; height: 48px">
+        <a href="#" data-target="sidemenu" class="sidenav-trigger show-on-medium-and-up" id="hamburger"><i
+            style="color: rgb(255, 255, 255); padding-top: 22px" class="large material-icons">menu</i></a>
+
+        <!-- <a href="#" class="brand-logo"
             ><img src="http://localhost:3000/logo.png" alt="logo"
           /></a> -->
-        </div>
-      </nav>
-    </header>
+        <p style="padding: 10px; color: rgb(255, 255, 255);  font-family: 'Roboto', sans-serif; font-weight: 700;">
+          PRATIK ELECTRICALS
+          INDIA</p>
+      </div>
+    </nav>
+  </header>
 
-    <aside id="sidenav-1" class="sidenav white sidenav-fixed">
-      <div class="sidenav-wrapper">
-        <div class="sidebar-profile">
-          <div class="sidebar-profile-image">
-            <img src="../assets/images/profile.png" class="circle" alt="logo" />
-            <div
-              class="right"
-              id="currentTime"
-              style="
+  <aside id="sidemenu" class="sidenav white sidenav-fixed">
+    <div class="sidenav-wrapper">
+      <div class="sidebar-profile">
+        <div class="sidebar-profile-image">
+          <img src="../assets/images/profile.png" class="circle" alt="logo" />
+          <div class="right" id="currentTime" style="
                 font-family: 'Roboto Condensed', sans-serif;
                 font-size: 16px;
-              "
-            ></div>
-          </div>
-          <div class="sidebar-profile-info">
-            <p
-              id="userName"
-              style="
+              "></div>
+        </div>
+        <div class="sidebar-profile-info">
+          <p id="userName" style="
                 font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman',
                   serif;
-              "
-            ></p>
+              "></p>
 
-            <a href="javascript:void(0);" id="btnLogout"
-              >Logout <i class="small material-icons">exit_to_app</i></a
-            >
-          </div>
+          <a href="javascript:void(0);" id="btnLogout">Logout <i class="small material-icons">exit_to_app</i></a>
         </div>
-
-        <ul class="sidebar-menu collapsible">
-          <li class="no-padding">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>CUSTOMER<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="newCustomer"><a href="#">Add Customer</a></li>
-                <li id="cusList"><a href="#">Customer List</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="no-padding">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>SUPPLIER<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="newSupplier"><a href="#">Add Supplier</a></li>
-                <li id="supList"><a href="#">Supplier List</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="no-padding">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>ITEM<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="newItem"><a href="#">Add Item</a></li>
-                <li id="itemList"><a href="#">Item List</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="no-padding">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>INVOICE<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="newInvoice"><a href="#">New Invoice</a></li>
-                <li id="invList"><a href="#">Invoice List</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="no-padding" id="setAccount">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>ACCOUNT<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="account"><a href="#">Add Account</a></li>
-                <li id="journal"><a href="#">Journal Entry</a></li>
-                <li id="ledger"><a href="#">Agents Ledger</a></li>
-                <li id="generalledger"><a href="#">General Ledger</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="no-padding" id="setPayment">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>PAYABLE<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="payment"><a href="#">New Payment</a></li>
-                <li id="listPayments"><a href="#">Payments List</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="no-padding" id="setReceive">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>RECEIVABLE<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="receipt"><a href="#">New Receipt</a></li>
-                <li id="listReceive"><a href="#">Receipt List</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="no-padding">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>REPORTS<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="pdfReport"><a href="#">Ledger Report</a></li>
-                <li id="tdsReport"><a href="#">TDS Report</a></li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="no-padding">
-            <a class="collapsible-header waves-effect waves-grey"
-              ><i class="large material-icons">apps</i>EXTRA<i
-                class="nav-drop-icon material-icons"
-                >keyboard_arrow_right</i
-              ></a
-            >
-            <div class="collapsible-body">
-              <ul>
-                <li id="newUser"><a href="#">New User</a></li>
-                <li id="dbbackup"><a href="#">Data Backup</a></li>
-                <li id="messenger"><a href="#">Send Message</a></li>
-                <li id="companyInfo"><a href="#">Company Info</a></li>
-              </ul>
-            </div>
-          </li>
-        </ul>
       </div>
-    </aside>
 
-    <!-- RIGHT SIDEBAR	 -->
-    <!-- <ul id="sidenav-2" class="sidenav">
+      <ul class="sidebar-menu collapsible">
+        <li class="no-padding">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>CUSTOMER<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="newCustomer"><a href="#">Add Customer</a></li>
+              <li id="cusList"><a href="#">Customer List</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="no-padding">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>SUPPLIER<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="newSupplier"><a href="#">Add Supplier</a></li>
+              <li id="supList"><a href="#">Supplier List</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="no-padding">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>ITEM<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="newItem"><a href="#">Add Item</a></li>
+              <li id="itemList"><a href="#">Item List</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="no-padding">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>INVOICE<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="newInvoice"><a href="#">New Invoice</a></li>
+              <li id="invList"><a href="#">Invoice List</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="no-padding" id="setAccount">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>ACCOUNT<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="account"><a href="#">Add Account</a></li>
+              <li id="journal"><a href="#">Journal Entry</a></li>
+              <li id="ledger"><a href="#">Agents Ledger</a></li>
+              <li id="generalledger"><a href="#">General Ledger</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="no-padding" id="setPayment">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>PAYABLE<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="payment"><a href="#">New Payment</a></li>
+              <li id="listPayments"><a href="#">Payments List</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="no-padding" id="setReceive">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>RECEIVABLE<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="receipt"><a href="#">New Receipt</a></li>
+              <li id="listReceive"><a href="#">Receipt List</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="no-padding">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>REPORTS<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="pdfReport"><a href="#">Ledger Report</a></li>
+              <li id="tdsReport"><a href="#">TDS Report</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="no-padding">
+          <a class="collapsible-header waves-effect waves-grey"><i class="large material-icons">apps</i>EXTRA<i
+              class="nav-drop-icon material-icons">keyboard_arrow_right</i></a>
+          <div class="collapsible-body">
+            <ul>
+              <li id="newUser"><a href="#">New User</a></li>
+              <li id="dbbackup"><a href="#">Data Backup</a></li>
+              <li id="messenger"><a href="#">Send Message</a></li>
+              <li id="companyInfo"><a href="#">Company Info</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- RIGHT SIDEBAR	 -->
+  <!-- <ul id="sidenav-2" class="sidenav">
       <li><a class="subheader">Subheader</a></li>
       <li>
         <a href="https://github.com/dogfalo/materialize/" target="_blank"
@@ -219,231 +174,142 @@
     </ul>
      -->
 
-    <main id="test2" class="testPad">
-      <div class="col s12" style="margin: 0 12px !important">
-        <div id="createTable" style="margin-top: 8px"></div>
-        <div id="companyDetails" style="display: none">
-          <form method="post" class="col s12" enctype="multipart/form-data">
-            <div class="row">
-              <div class="input-field col s6">
-                <input
-                  placeholder=""
-                  id="name"
-                  name="name"
-                  type="text"
-                  class="validate"
-                  required
-                />
-                <label for="name">Company Name</label>
-              </div>
-
-              <div class="file-field input-field col s3">
-                <div class="btn">
-                  <span>Upload Logo</span>
-                  <input
-                    type="file"
-                    multiple
-                    id="company_photo"
-                    name="company_photo"
-                  />
-                </div>
-                <div class="file-path-wrapper">
-                  <input class="file-path validate" type="text" />
-                </div>
-              </div>
-              <div id="gallery" name="gallery" class="gallery">
-                <img id="image" />
-              </div>
-
-              <div class="input-field col s3">
-                <input
-                  placeholder=""
-                  id="address_one"
-                  type="text"
-                  name="address_one"
-                  required
-                  class="validate"
-                />
-                <label for="address_one">Address</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <input
-                  placeholder=""
-                  id="city"
-                  type="text"
-                  name="city"
-                  required
-                  class="validate"
-                />
-                <label for="city">City</label>
-              </div>
-              <div class="input-field col s2">
-                <input
-                  placeholder=""
-                  id="pincode"
-                  type="text"
-                  name="pincode"
-                  required
-                  class="validate"
-                  onkeypress="return ValidateNumbers(event)"
-                />
-                <label for="pincode">Pincode</label>
-              </div>
-              <div class="col s4">
-                <label>STATE</label>
-                <select name="state" class="browser-default stateName">
-                  <option value="" disabled selected>Select State</option>
-                </select>
-              </div>
+  <main id="mainDiv" class="fullDiv">
+    <div class="col s12" style="margin: 0 12px !important">
+      <div id="createTable" style="margin-top: 8px"></div>
+      <div id="companyDetails" style="display: none">
+        <form method="post" class="col s12" enctype="multipart/form-data">
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="" id="name" name="name" type="text" class="validate" required />
+              <label for="name">Company Name</label>
             </div>
 
-            <div class="row">
-              <div class="input-field col s3">
-                <i class="material-icons prefix">phone</i>
-                <input
-                  placeholder=""
-                  id="phone"
-                  type="text"
-                  name="phone"
-                  class="validate"
-                  onkeypress="return ValidateNumbers(event)"
-                />
-                <label for="phone">Telephone</label>
+            <div class="file-field input-field col s3">
+              <div class="btn">
+                <span>Upload Logo</span>
+                <input type="file" multiple id="company_photo" name="company_photo" />
               </div>
-              <div class="input-field col s3">
-                <i class="material-icons prefix">phone_android</i>
-                <input
-                  placeholder=""
-                  id="mobile"
-                  name="mobile"
-                  type="tel"
-                  class="validate"
-                  onkeypress="return ValidateNumbers(event)"
-                />
-                <label for="mobile">Mobile</label>
-              </div>
-              <div class="input-field col s3">
-                <i class="material-icons prefix">edit</i>
-                <input
-                  placeholder=""
-                  id="pan"
-                  type="text"
-                  name="pan"
-                  class="validate"
-                />
-                <label for="pan">PAN</label>
-              </div>
-              <div class="input-field col s3">
-                <i class="material-icons prefix">edit</i>
-                <input
-                  placeholder=""
-                  id="gstin"
-                  type="text"
-                  name="gstin"
-                  class="validate"
-                  required
-                />
-                <label for="gstin">GSTIN</label>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text" />
               </div>
             </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <i class="material-icons prefix">email</i>
-                <input
-                  id="email"
-                  placeholder=""
-                  type="email"
-                  name="email"
-                  class="validate"
-                />
-                <label for="email">Email</label>
-              </div>
-              <div class="input-field col s6">
-                <i class="material-icons prefix">email</i>
-                <input
-                  placeholder=""
-                  id="website"
-                  type="text"
-                  name="website"
-                  class="validate"
-                />
-                <label for="website">Website</label>
-              </div>
+            <div id="gallery" name="gallery" class="gallery">
+              <img id="image" />
             </div>
-            <div class="right-align">
-              <button
-                class="btn-small waves-effect waves-light"
-                type="submit"
-                id="btnSave"
-                name="action"
-              >
-                SAVE
-              </button>
+
+            <div class="input-field col s3">
+              <input placeholder="" id="address_one" type="text" name="address_one" required class="validate" />
+              <label for="address_one">Address</label>
             </div>
-          </form>
-        </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="" id="city" type="text" name="city" required class="validate" />
+              <label for="city">City</label>
+            </div>
+            <div class="input-field col s2">
+              <input placeholder="" id="pincode" type="text" name="pincode" required class="validate"
+                onkeypress="return ValidateNumbers(event)" />
+              <label for="pincode">Pincode</label>
+            </div>
+            <div class="col s4">
+              <label>STATE</label>
+              <select name="state" class="browser-default stateName">
+                <option value="" disabled selected>Select State</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s3">
+              <i class="material-icons prefix">phone</i>
+              <input placeholder="" id="phone" type="text" name="phone" class="validate"
+                onkeypress="return ValidateNumbers(event)" />
+              <label for="phone">Telephone</label>
+            </div>
+            <div class="input-field col s3">
+              <i class="material-icons prefix">phone_android</i>
+              <input placeholder="" id="mobile" name="mobile" type="tel" class="validate"
+                onkeypress="return ValidateNumbers(event)" />
+              <label for="mobile">Mobile</label>
+            </div>
+            <div class="input-field col s3">
+              <i class="material-icons prefix">edit</i>
+              <input placeholder="" id="pan" type="text" name="pan" class="validate" />
+              <label for="pan">PAN</label>
+            </div>
+            <div class="input-field col s3">
+              <i class="material-icons prefix">edit</i>
+              <input placeholder="" id="gstin" type="text" name="gstin" class="validate" required />
+              <label for="gstin">GSTIN</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <i class="material-icons prefix">email</i>
+              <input id="email" placeholder="" type="email" name="email" class="validate" />
+              <label for="email">Email</label>
+            </div>
+            <div class="input-field col s6">
+              <i class="material-icons prefix">email</i>
+              <input placeholder="" id="website" type="text" name="website" class="validate" />
+              <label for="website">Website</label>
+            </div>
+          </div>
+          <div class="right-align">
+            <button class="btn-small waves-effect waves-light" type="submit" id="btnSave" name="action">
+              SAVE
+            </button>
+          </div>
+        </form>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <script>
-      if (typeof module === "object") {
-        window.module = module;
-        module = undefined;
+  <script>
+    if (typeof module === "object") {
+      window.module = module;
+      module = undefined;
+    }
+  </script>
+
+  <script type="text/javascript" src="../assets/js/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="../assets/js/materialize.min.js"></script>
+
+  <script src="../assets/js/jquery.dataTables.min.js"></script>
+
+  <script type="text/javascript" src="../assets/js/dataTables.select.min.js"></script>
+  <script type="text/javascript" src="../assets/js/dataTables.buttons.min.js"></script>
+  <script type="text/javascript" src="../assets/js/dataTables.responsive.min.js"></script>
+  <script src="./home.js"></script>
+  <script src="../assets/js/custom.js"></script>
+  <script src="./invoicepdf.js"></script>
+  <script src="./ledgerpdf.js"></script>
+
+  <script>
+    (function () {
+      function checkTime(i) {
+        return i < 10 ? "0" + i : i;
       }
-    </script>
 
-    <script
-      type="text/javascript"
-      src="../assets/js/jquery-3.4.1.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="../assets/js/materialize.min.js"
-    ></script>
+      function startTime() {
+        var today = new Date(),
+          h = checkTime(today.getHours()),
+          m = checkTime(today.getMinutes()),
+          s = checkTime(today.getSeconds());
+        document.getElementById("currentTime").innerHTML =
+          h + ":" + m + ":" + s;
+        t = setTimeout(function () {
+          startTime();
+        }, 500);
+      }
+      startTime();
+    })();
+  </script>
+  <script>
+    if (window.module) module = window.module;
+  </script>
+</body>
 
-    <script src="../assets/js/jquery.dataTables.min.js"></script>
-
-    <script
-      type="text/javascript"
-      src="../assets/js/dataTables.select.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="../assets/js/dataTables.buttons.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="../assets/js/dataTables.responsive.min.js"
-    ></script>
-    <script src="./home.js"></script>
-    <script src="../assets/js/custom.js"></script>
-    <script src="./invoicepdf.js"></script>
-    <script src="./ledgerpdf.js"></script>
-
-    <script>
-      (function () {
-        function checkTime(i) {
-          return i < 10 ? "0" + i : i;
-        }
-
-        function startTime() {
-          var today = new Date(),
-            h = checkTime(today.getHours()),
-            m = checkTime(today.getMinutes()),
-            s = checkTime(today.getSeconds());
-          document.getElementById("currentTime").innerHTML =
-            h + ":" + m + ":" + s;
-          t = setTimeout(function () {
-            startTime();
-          }, 500);
-        }
-        startTime();
-      })();
-    </script>
-    <script>
-      if (window.module) module = window.module;
-    </script>
-  </body>
 </html>

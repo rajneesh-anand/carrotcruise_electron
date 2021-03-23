@@ -1,10 +1,11 @@
-$(document).ready(function() {
-	document.getElementById("test").addEventListener("click", () => {
+$(function () {
+	document.getElementById("hamburger").addEventListener("click", () => {
 		$(".sidenav-fixed").toggle();
-		$("#test2").toggleClass("testPad");
+
+		$("#mainDiv").toggleClass("fullDiv");
 	});
 
-	$(".sidebar-menu > li > a.collapsible-header").click(function() {
+	$(".sidebar-menu > li > a.collapsible-header").click(function () {
 		$(".sidebar-menu > li > a.active:not(.collapsible-header)")
 			.parent()
 			.removeClass("active");

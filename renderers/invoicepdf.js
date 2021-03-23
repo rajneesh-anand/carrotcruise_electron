@@ -16,6 +16,12 @@ const printInvoiceAPICall = (id) => {
 };
 
 function printInvoicePdf(invoice_id) {
+
+  fs.access("C://PDF_REPORTS", function (error) {
+    if (error) {
+      fs.mkdirSync("C://PDF_REPORTS");
+    }
+  });
   printInvoiceAPICall(invoice_id).then(async (result) => {
     if (result.message === "success") {
       let invResults = result.data;

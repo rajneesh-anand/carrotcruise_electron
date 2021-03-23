@@ -152,7 +152,7 @@ addItem.addEventListener("click", (e) => {
   let table = document.getElementById("itemTable");
   let rowCnt = table.rows.length;
 
-  let total = table.rows[rowCnt - 1].cells[3].innerText;
+  let total = table.rows[rowCnt - 1].cells[4].innerText;
   if (total === "" || total == 0) {
     return;
   }
@@ -181,8 +181,10 @@ function findGstRate(selectedValue, rowIndex) {
   console.log(selectedValue, rowIndex);
   const result = itemList.find(({ Item_Name }) => Item_Name === selectedValue);
   let gstRate = parseFloat(result.Gst_Rate.slice(0, -1));
-  console.log(gstRate);
-  tableRows[rowIndex].cells[4].children[0].value = gstRate;
+  let hsn_code = result.HSN_Code
+  console.log(gstRate, hsn_code);
+  tableRows[rowIndex].cells[5].children[0].value = gstRate;
+  tableRows[rowIndex].cells[1].innerText = hsn_code;
   GetTotal(rowIndex);
 }
 
@@ -197,6 +199,8 @@ function addRow(trIndex) {
       (item) => `<option value='${item.Item_Name}'>${item.Item_Name}</option>`
     )}  
     </select>` +
+    "</td>" +
+    "<td>" +
     "</td>" +
     "<td>" +
     `<input type=text onkeypress= 'return ValidateNumbers(event)' onkeyup=GetTotal(${trIndex}) />` +
@@ -234,13 +238,13 @@ function removeRow(oButton) {
 function GetTotal(rowIndex) {
   var tableRows = document.getElementById("itemTable").rows;
   let el = tableRows[rowIndex].children;
-  let rQnty = el[1].children[0].value === "" ? 0 : el[1].children[0].value;
-  let rRate = el[2].children[0].value === "" ? 0 : el[2].children[0].value;
-  let rGSTRate = el[4].children[0].value === "" ? 0 : el[4].children[0].value;
+  let rQnty = el[2].children[0].value === "" ? 0 : el[2].children[0].value;
+  let rRate = el[3].children[0].value === "" ? 0 : el[3].children[0].value;
+  let rGSTRate = el[5].children[0].value === "" ? 0 : el[5].children[0].value;
   let rTotal = parseFloat(rQnty) * parseFloat(rRate);
   let rGST = (parseFloat(rTotal) * parseFloat(rGSTRate)) / 100;
-  tableRows[rowIndex].cells[3].innerHTML = rTotal.toFixed(2);
-  tableRows[rowIndex].cells[5].innerHTML = rGST.toFixed(2);
+  tableRows[rowIndex].cells[4].innerHTML = rTotal.toFixed(2);
+  tableRows[rowIndex].cells[6].innerHTML = rGST.toFixed(2);
   setInvoiceAmount();
 }
 
@@ -252,8 +256,8 @@ function setInvoiceAmount() {
 
   for (var i = 1; i < tRows.length; i++) {
     let el = tRows[i].children;
-    totalTaxableAmount = totalTaxableAmount + parseFloat(el[3].innerText);
-    totalGstAmount = totalGstAmount + parseFloat(el[5].innerText);
+    totalTaxableAmount = totalTaxableAmount + parseFloat(el[4].innerText);
+    totalGstAmount = totalGstAmount + parseFloat(el[6].innerText);
   }
   totalAmount = parseFloat(totalTaxableAmount) + parseFloat(totalGstAmount);
   document.getElementById(
@@ -271,21 +275,23 @@ function table_to_array(table_id) {
   const lastRow = myData[myData.length - 1].children;
 
   if (
-    lastRow[1].children[0].value === "" ||
-    lastRow[2].children[0].value === ""
+    lastRow[2].children[0].value === "" ||
+    lastRow[3].children[0].value === ""
   ) {
     for (var i = 1; i < myData.length - 1; i++) {
       let el = myData[i].children;
 
       let itemName = myData[i].children[0].childNodes[0].value;
-      let rQnty = el[1].children[0].value;
-      let rRate = el[2].children[0].value;
-      let rTotal = el[3].innerText;
-      let rGstRate = el[4].children[0].value;
-      let rGst = el[5].innerText;
+      let hsn = el[1].innerText;
+      let rQnty = el[2].children[0].value;
+      let rRate = el[3].children[0].value;
+      let rTotal = el[4].innerText;
+      let rGstRate = el[5].children[0].value;
+      let rGst = el[6].innerText;
 
       let rowItem = {
         itemName: itemName,
+        hsn: hsn,
         rQnty: rQnty,
         rRate: parseFloat(rRate).toFixed(2),
         rTotal: parseFloat(rTotal).toFixed(2),
@@ -300,16 +306,18 @@ function table_to_array(table_id) {
       let el = myData[i].children;
 
       let itemName = myData[i].children[0].childNodes[0].value;
-      let rQnty = el[1].children[0].value;
-      let rRate = el[2].children[0].value;
-      let rTotal = el[3].innerText;
-      let rGstRate = el[4].children[0].value;
-      let rGst = el[5].innerText;
+      let hsn = el[1].innerText;
+      let rQnty = el[2].children[0].value;
+      let rRate = el[3].children[0].value;
+      let rTotal = el[4].innerText;
+      let rGstRate = el[5].children[0].value;
+      let rGst = el[6].innerText;
 
       let rowItem = {
         itemName: itemName,
+        hsn: hsn,
         rQnty: rQnty,
-        rRate: rRate,
+        rRate: parseFloat(rRate).toFixed(2),
         rTotal: parseFloat(rTotal).toFixed(2),
         rGst: parseFloat(rGst).toFixed(2),
         rGstRate: parseFloat(rGstRate),

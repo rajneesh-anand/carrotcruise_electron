@@ -606,7 +606,7 @@ ipcMain.on("create:itemwindow", (event, fileName) => {
   });
 });
 
-// Edit Item Window
+// Item edit window
 
 const fetchItemDataByID = async (id) => {
   return await axios
@@ -654,7 +654,7 @@ ipcMain.on("item:edit", (event, args) => {
   });
 });
 
-// TDS REPORT WINDOW
+// Tds window
 
 ipcMain.on("create:tdsReportWindow", (event, fileName) => {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;

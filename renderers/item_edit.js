@@ -23,12 +23,18 @@ function isNumberKey(evt, obj) {
   return true;
 }
 
-$(document).ready(function () {
-  $("select").formSelect();
+$(function () {
   const btnClose = document.getElementById("btnClose");
   btnClose.addEventListener("click", (event) => {
     const window = remote.getCurrentWindow();
     window.close();
+  });
+
+  $(".datepicker").datepicker({
+    defaultDate: new Date(),
+    autoClose: true,
+    format: "dd mmm yyyy",
+    setDefaultDate: true,
   });
 });
 
@@ -52,6 +58,7 @@ form.addEventListener("submit", function (event) {
       name: data.get("item_name").toUpperCase(),
       gst_rate: data.get("entryType"),
       unit_price: parseFloat(data.get("rate")).toFixed(2),
+      hsn_code: data.get("hsn").toUpperCase(),
     };
 
     console.log(itemData);
@@ -75,8 +82,9 @@ form.addEventListener("submit", function (event) {
 
 ipcRenderer.on("sendItemDataForEdit", (event, data) => {
   console.log(data);
-  document.getElementById("id").value = data.Id;
+  document.getElementById("id").value = data.id;
   document.getElementById("item_name").value = data.Item_Name;
   document.getElementById("rate").value = data.Unit_Price;
+  document.getElementById("hsn").value = data.HSN_Code;
   document.getElementById("entryType").value = data.Gst_Rate;
 });

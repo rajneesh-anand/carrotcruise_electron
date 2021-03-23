@@ -1,22 +1,35 @@
 footer {
   padding-left: 300px;
 }
-
-.testPad {
-  padding-left: 240px;
-  height: calc(100% - 64px) !important;
+.navbar-fixed {
+  height: 48px !important;
 }
+
+nav {
+  height: 48px !important;
+  line-height: 0px !important;
+}
+
+nav a.sidenav-trigger i {
+  height: 0px !important;
+  line-height: 0px !important;
+}
+
 .sidenav {
   padding: 0 !important;
-  height: calc(100% - 64px) !important;
-  margin-top: 64px;
-
+  height: calc(100% - 48px) !important;
+  margin-top: 48px;
   width: 240px !important;
 }
 
+
+.fullDiv {
+  padding-left: 240px;
+  height: calc(100% - 48px) !important;
+}
 .sidenav-wrapper {
   min-height: 100% !important;
-  padding-bottom: 96px;
+  padding-bottom: 10px;
   position: relative;
 }
 
