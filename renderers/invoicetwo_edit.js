@@ -6,10 +6,12 @@ const path = require("path");
 const fs = require("fs");
 const puppeteer = require("puppeteer");
 const handlebars = require("handlebars");
+const { CloudWatchLogs } = require("aws-sdk");
 
 var itemList = [];
 
 $(function () {
+  console.log(`testing first`)
   const btnClose = document.getElementById("btnClose");
   btnClose.addEventListener("click", (event) => {
     const window = remote.getCurrentWindow();
@@ -22,7 +24,8 @@ $(function () {
     format: "dd mmm yyyy",
     setDefaultDate: true,
   });
-  itemNames();
+  // itemNames(addRow, 1);
+
 });
 
 function formattedDate(dateValue) {
@@ -56,10 +59,11 @@ function isNumberKey(evt, obj) {
 const addItem = document.getElementById("btnInsertNewRow");
 addItem.addEventListener("click", (e) => {
   e.preventDefault();
+  console.log(itemList)
   let table = document.getElementById("itemTable");
   let rowCnt = table.rows.length;
 
-  let total = table.rows[rowCnt - 1].cells[3].innerText;
+  let total = table.rows[rowCnt - 1].cells[4].innerText;
   if (total === "" || total == 0) {
     return;
   }
@@ -70,22 +74,26 @@ function itemNames(cb) {
   axios
     .get(`http://localhost:3000/api/fetchitemnames`)
     .then((response) => {
+      // itemList.splice(0, arr.length)
       response.data.data.map((item) => {
         itemList.push(item);
       });
       cb(arguments[1]);
     })
     .catch((error) => {
-      alert(error.response.data.message);
+      alert(error.data.message);
     });
 }
-
-function findGstRate(selectedValue) {
-  console.log(selectedValue);
+function findGstRate(selectedValue, rowIndex) {
+  var tableRows = document.getElementById("itemTable").rows;
+  console.log(selectedValue, rowIndex);
   const result = itemList.find(({ Item_Name }) => Item_Name === selectedValue);
   let gstRate = parseFloat(result.Gst_Rate.slice(0, -1));
-  console.log(gstRate);
-  return gstRate.toFixed(2);
+  let hsn_code = result.HSN_Code
+  console.log(gstRate, hsn_code);
+  tableRows[rowIndex].cells[5].children[0].value = gstRate;
+  tableRows[rowIndex].cells[1].innerText = hsn_code;
+  GetTotal(rowIndex);
 }
 
 function addRow(trIndex) {
@@ -93,21 +101,25 @@ function addRow(trIndex) {
   let tr = document.createElement("tr");
   tr.innerHTML =
     "<td>" +
-    `<select id="itemSelect" class="browser-default itemSelect" onchange="findGstRate(this.value)">  
+    `<select id="itemSelect" class="browser-default itemSelect" onchange="findGstRate(this.value,${trIndex})">
+    <option disabled selected value="Select Item">Select Item</option>
     ${itemList.map(
       (item) => `<option value='${item.Item_Name}'>${item.Item_Name}</option>`
     )}  
     </select>` +
     "</td>" +
     "<td>" +
-    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${trIndex}) />` +
     "</td>" +
     "<td>" +
-    `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${trIndex}) />` +
+    `<input type=text onkeypress= 'return ValidateNumbers(event)' onkeyup=GetTotal(${trIndex}) />` +
+    "</td>" +
+    "<td>" +
+    `<input type=text 	onkeypress="return isNumberKey(event,this);"  onkeyup=GetTotal(${trIndex}) />` +
     "</td>" +
     "<td>" +
     "</td>" +
     "<td>" +
+    `<input type=text onkeypress= 'return ValidateNumbers(event)' onkeyup=GetTotal(${trIndex}) />` +
     "</td>" +
     "<td>" +
     "</td>" +
@@ -119,33 +131,6 @@ function addRow(trIndex) {
   table.appendChild(tr);
 }
 
-// function addRow() {
-//   var table = document.getElementById("itemTable");
-//   var tr = document.createElement("tr");
-//   tr.innerHTML =
-//     "<td>" +
-//     `<select class="browser-default"> ${itemsNames.map(
-//       (item) => `<option value=${item}>${item}</option>`
-//     )}
-//     </select>` +
-//     "</td>" +
-//     "<td>" +
-//     `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
-//     "</td>" +
-//     "<td>" +
-//     `<input type=text onkeypress= return ValidateNumbers(event) onkeyup=GetTotal() />` +
-//     "</td>" +
-//     "<td>" +
-//     "</td>" +
-//     "<td>" +
-//     "<button type=button onclick=removeRow(this)>" +
-//     "X" +
-//     "</button>" +
-//     "</td>";
-//   table.appendChild(tr);
-// }
-
-// function to delete a row.
 function removeRow(oButton) {
   let table = document.getElementById("itemTable");
   let rowCnt = table.rows.length;
@@ -159,20 +144,15 @@ function removeRow(oButton) {
 }
 
 function GetTotal(rowIndex) {
-  console.log(rowIndex);
   var tableRows = document.getElementById("itemTable").rows;
   let el = tableRows[rowIndex].children;
-  let itemName = el[0].children[0].value === "" ? 0 : el[0].children[0].value;
-  console.log(itemName);
-  let gstRate = findGstRate(itemName);
-  console.log(gstRate);
-  let rQnty = el[1].children[0].value === "" ? 0 : el[1].children[0].value;
-  let rRate = el[2].children[0].value === "" ? 0 : el[2].children[0].value;
+  let rQnty = el[2].children[0].value === "" ? 0 : el[2].children[0].value;
+  let rRate = el[3].children[0].value === "" ? 0 : el[3].children[0].value;
+  let rGSTRate = el[5].children[0].value === "" ? 0 : el[5].children[0].value;
   let rTotal = parseFloat(rQnty) * parseFloat(rRate);
-  let rGST = (parseFloat(rTotal) * parseFloat(gstRate)) / 100;
-  tableRows[rowIndex].cells[4].innerHTML = gstRate;
-  tableRows[rowIndex].cells[5].innerHTML = rGST.toFixed(2);
-  tableRows[rowIndex].cells[3].innerHTML = rTotal.toFixed(2);
+  let rGST = (parseFloat(rTotal) * parseFloat(rGSTRate)) / 100;
+  tableRows[rowIndex].cells[4].innerHTML = rTotal.toFixed(2);
+  tableRows[rowIndex].cells[6].innerHTML = rGST.toFixed(2);
   setInvoiceAmount();
 }
 
@@ -184,8 +164,8 @@ function setInvoiceAmount() {
 
   for (var i = 1; i < tRows.length; i++) {
     let el = tRows[i].children;
-    totalTaxableAmount = totalTaxableAmount + parseFloat(el[3].innerText);
-    totalGstAmount = totalGstAmount + parseFloat(el[5].innerText);
+    totalTaxableAmount = totalTaxableAmount + parseFloat(el[4].innerText);
+    totalGstAmount = totalGstAmount + parseFloat(el[6].innerText);
   }
   totalAmount = parseFloat(totalTaxableAmount) + parseFloat(totalGstAmount);
   document.getElementById(
@@ -203,23 +183,25 @@ function table_to_array(table_id) {
   const lastRow = myData[myData.length - 1].children;
 
   if (
-    lastRow[1].children[0].value === "" ||
-    lastRow[2].children[0].value === ""
+    lastRow[2].children[0].value === "" ||
+    lastRow[3].children[0].value === ""
   ) {
     for (var i = 1; i < myData.length - 1; i++) {
       let el = myData[i].children;
 
       let itemName = myData[i].children[0].childNodes[0].value;
-      let rQnty = el[1].children[0].value;
-      let rRate = el[2].children[0].value;
-      let rTotal = el[3].innerText;
-      let rGstRate = el[4].innerText;
-      let rGst = el[5].innerText;
+      let hsn = el[1].innerText;
+      let rQnty = el[2].children[0].value;
+      let rRate = el[3].children[0].value;
+      let rTotal = el[4].innerText;
+      let rGstRate = el[5].children[0].value;
+      let rGst = el[6].innerText;
 
       let rowItem = {
         itemName: itemName,
+        hsn: hsn,
         rQnty: rQnty,
-        rRate: rRate,
+        rRate: parseFloat(rRate).toFixed(2),
         rTotal: parseFloat(rTotal).toFixed(2),
         rGst: parseFloat(rGst).toFixed(2),
         rGstRate: parseFloat(rGstRate),
@@ -232,16 +214,18 @@ function table_to_array(table_id) {
       let el = myData[i].children;
 
       let itemName = myData[i].children[0].childNodes[0].value;
-      let rQnty = el[1].children[0].value;
-      let rRate = el[2].children[0].value;
-      let rTotal = el[3].innerText;
-      let rGstRate = el[4].innerText;
-      let rGst = el[5].innerText;
+      let hsn = el[1].innerText;
+      let rQnty = el[2].children[0].value;
+      let rRate = el[3].children[0].value;
+      let rTotal = el[4].innerText;
+      let rGstRate = el[5].children[0].value;
+      let rGst = el[6].innerText;
 
       let rowItem = {
         itemName: itemName,
+        hsn: hsn,
         rQnty: rQnty,
-        rRate: rRate,
+        rRate: parseFloat(rRate).toFixed(2),
         rTotal: parseFloat(rTotal).toFixed(2),
         rGst: parseFloat(rGst).toFixed(2),
         rGstRate: parseFloat(rGstRate),
@@ -264,38 +248,31 @@ var form = document.querySelector("form");
 
 form.addEventListener("submit", function (event) {
   event.preventDefault();
-
-  let baseAmt = document.getElementById("baseAmt").innerText;
-  let cgstAmt = document.getElementById("cgstAmount").innerText;
-  let sgstAmt = document.getElementById("sgstAmount").innerText;
-  let igstAmt = document.getElementById("igstAmount").innerText;
+  let taxableAmt = document.getElementById("TotalTaxableAmount").innerText;
+  let gstAmt = document.getElementById("totalGstAmount").innerText;
   let totalAmt = document.getElementById("totalAmount").innerText;
-  let totalgst =
-    parseFloat(cgstAmt) + parseFloat(sgstAmt) + parseFloat(igstAmt);
 
   let data = new FormData(form);
 
   let invoiceData = {
     InvoiceItems: table_to_array("itemTable"),
     Invoice_Number: data.get("invoice_no"),
+    Invoice_Type: data.get("invoicetype"),
     Invoice_Date: formattedDate(data.get("invoice_date")),
     Agent_Name: data.get("agent"),
-    Base_Amount: baseAmt,
-    Cgst_Rate: data.get("cgstRate") === "" ? 0 : data.get("cgstRate"),
-    Sgst_Rate: data.get("sgstRate") === "" ? 0 : data.get("sgstRate"),
-    Igst_Rate: data.get("igstRate") === "" ? 0 : data.get("igstRate"),
-    Cgst_Amount: cgstAmt,
-    Sgst_Amount: sgstAmt,
-    Igst_Amount: igstAmt,
-    TotalGst_Amount: totalgst.toFixed(2),
-    Total_Amount: totalAmt,
-    Credit_Account: "ACC1",
+    Invoice_Type: data.get("invoicetype"),
+    Base_Amount: parseFloat(taxableAmt).toFixed(2),
+    TotalGst_Amount: parseFloat(gstAmt).toFixed(2),
+    Total_Amount: parseFloat(totalAmt).toFixed(2),
+    EntryDate: formattedDate(data.get("invoice_date")),
+    Credit_Account:
+      data.get("invoicetype") === "CREDIT INVOICE" ? "ACC1" : "ACC2",
     Credit_Amount: totalAmt,
     Debit_Account: data.get("agent"),
     Debit_Amount: totalAmt,
-    EntryType: "Invoice",
+    EntryType: "Tax Invoice",
     InvoiceNumber: data.get("invoice_no"),
-    Comments: "INVOICE",
+    Comments: "Sale's Invoice",
   };
   console.log(invoiceData);
 
@@ -364,7 +341,7 @@ function dateddmmmyyyy(args) {
 }
 
 ipcRenderer.on("fetchCustomers", (event, data) => {
-  customers = [...data];
+  // customers = [...data];
   var Options = "";
   data.map(function (element, i) {
     Options =
@@ -375,9 +352,15 @@ ipcRenderer.on("fetchCustomers", (event, data) => {
   $(".agentName").formSelect();
 });
 
+
+ipcRenderer.on("fetchItems", (event, data) => {
+
+  itemList = [...data];
+});
+
 ipcRenderer.on("sendInvoiceDataForEdit", (event, args) => {
-  console.log(args[0]);
-  setInvoiceData(args[0]);
+  console.log(args);
+  setInvoiceData(args);
 });
 
 function setInvoiceData(data) {
@@ -405,32 +388,38 @@ function setInvoiceData(data) {
 
 function append_json(data) {
   console.log(data);
+
   var table = document.getElementById("itemTable");
   data.forEach(function (object, index) {
     var tr = document.createElement("tr");
     tr.innerHTML =
       "<td>" +
-      `<select class="browser-default"> <option value='${object.itemName}'>${object.itemName}</option></select>` +
+      `<select id="itemSelect" class="browser-default itemSelect" onchange="findGstRate(this.value,${index + 1})">
+      <option value='${object.itemName}'>${object.itemName}</option>  
+      ${itemList.map((item) => ` <option value='${item.Item_Name}'>${item.Item_Name}</option> `)}     
+      </select>` +
       "</td>" +
       "<td>" +
-      `<input type=text value=${
-        object.rQnty
-      } onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${
-        index + 1
+      object.hsn +
+      "</td>" +
+      "<td>" +
+      `<input type=text value=${object.rQnty
+      } onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${index + 1
       }) />` +
       "</td>" +
       "<td>" +
-      `<input type=text value=${
-        object.rRate
-      } onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${
-        index + 1
+      `<input type=text value=${object.rRate
+      } onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${index + 1
       }) />` +
       "</td>" +
       "<td>" +
       object.rTotal +
       "</td>" +
       "<td>" +
-      object.rGstRate +
+      `<input type=text value=${object.rGstRate
+      } onkeypress= return ValidateNumbers(event) onkeyup=GetTotal(${index + 1
+      }) />` +
+
       "</td>" +
       "<td>" +
       object.rGst +

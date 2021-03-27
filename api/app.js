@@ -58,7 +58,7 @@ process.on("SIGTERM", () => {
 const port = process.env.PORT || 3000;
 
 app.listen(port, () =>
-  console.log(`API SERVER RUNNING ON ${process.env.DB_HOST_SERVER}:${port}`)
+  console.log(`API SERVER RUNNING ON PORT :${port}`)
 );
 
 module.exports = app;

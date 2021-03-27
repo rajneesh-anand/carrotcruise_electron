@@ -29,17 +29,15 @@ module.exports = {
         if (data.Invoice_Number) {
           let number = padLeadingZeros(data.Invoice_Number + 1, 5);
           let date = new Date();
-          let Invoice_Number = `CC${date.getFullYear()}${
-            date.getMonth() + 1
-          }-${number}`;
+          let Invoice_Number = `CC${date.getFullYear()}${date.getMonth() + 1
+            }-${number}`;
           return res.status(200).json({
             data: Invoice_Number,
           });
         } else {
           let date = new Date();
-          let Invoice_Number = `CC${date.getFullYear()}${
-            date.getMonth() + 1
-          }-00001`;
+          let Invoice_Number = `CC${date.getFullYear()}${date.getMonth() + 1
+            }-00001`;
           return res.status(200).json({
             data: Invoice_Number,
           });
@@ -133,7 +131,7 @@ module.exports = {
         });
       }
       return res.status(200).json({
-        message: "Invoice updated successfully !",
+        message: "Invoice updated !",
         data: results,
       });
     });
@@ -298,10 +296,10 @@ module.exports = {
   getInvoiceByID: (req, res) => {
     const invoiceId = req.params.id;
 
-    pool.query(
-      `SELECT * from invoice where Invoice_Number=?`,
+    db.get(
+      `SELECT * from invoices where Invoice_Number=?`,
       [invoiceId],
-      (error, results, fields) => {
+      (error, results) => {
         if (error) {
           return res.status(403).json({
             error: error,

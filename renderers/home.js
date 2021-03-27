@@ -550,7 +550,7 @@ function generateInvoiceDataTable() {
 		<th>ID</th>
 			<th>INVOICE NO.</th>
 			<th>INVOICE DATE</th>
-			<th>AGENT NAME</th>
+			<th>PARTY/CUSTOMER</th>
       <th>AMOUNT</th>
 			<th>GST AMOUNT</th>	   
       <th>NET AMOUNT</th>	   

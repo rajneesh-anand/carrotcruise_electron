@@ -17,7 +17,7 @@ const agentLedgerAPICallDateWise = (id) => {
       }
     )
     .then((response) => {
-      // console.log(response.data);
+
       return response.data;
     })
     .catch((error) => {
@@ -27,9 +27,11 @@ const agentLedgerAPICallDateWise = (id) => {
 
 function printAgentLedgerPdf(id) {
   agentLedgerAPICallDateWise(id).then(async (results) => {
+    console.log(results)
     if (results.message === "success") {
       let data = results.data;
-      let agentData = data[0];
+      console.log(data)
+      let agentData = data;
       // console.log(agentData[0].first_name);
 
       // let templateHtml = fs.readFileSync(

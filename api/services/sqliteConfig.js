@@ -6,6 +6,7 @@ var sqlite3 = require("sqlite3").verbose();
 var dbPath;
 var db;
 
+
 // Fetch Disk Info Asynchronusly
 // nodeDiskInfo
 //   .getDiskInfo()
@@ -42,10 +43,10 @@ try {
       if (err) {
         console.error(err.message);
       }
-      console.log("Connected to data");
+      console.log(`connected to data : ${dbPath}`);
     });
   } else {
-    console.log("Data location not found");
+    console.log("data location not found !");
   }
 } catch (err) {
   console.error(err);

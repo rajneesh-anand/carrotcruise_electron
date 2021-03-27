@@ -194,7 +194,7 @@ function addRow(trIndex) {
   tr.innerHTML =
     "<td>" +
     `<select id="itemSelect" class="browser-default itemSelect" onchange="findGstRate(this.value,${trIndex})">
-
+    <option disabled selected value="Select Item">Select Item</option>
     ${itemList.map(
       (item) => `<option value='${item.Item_Name}'>${item.Item_Name}</option>`
     )}  
@@ -397,17 +397,18 @@ form.addEventListener("submit", function (event) {
       Base_Amount: parseFloat(taxableAmt).toFixed(2),
       TotalGst_Amount: parseFloat(gstAmt).toFixed(2),
       Total_Amount: parseFloat(totalAmt).toFixed(2),
+      EntryDate: formattedDate(data.get("invoice_date")),
       Credit_Account:
         data.get("invoicetype") === "CREDIT INVOICE" ? "ACC1" : "ACC2",
       Credit_Amount: parseFloat(totalAmt).toFixed(2),
       Debit_Account: data.get("agent"),
       Debit_Amount: parseFloat(totalAmt).toFixed(2),
-      EntryType: data.get("invoicetype"),
+      EntryType: "Tax Invoice",
       InvoiceNumber: data.get("invoice_no"),
       Comments:
         data.get("invoicetype") === "CREDIT INVOICE"
-          ? "INVOICE"
-          : "CASH INVOICE",
+          ? "Sale's Invoice"
+          : "Cash Invoice",
     };
     console.log(invoiceData);
 

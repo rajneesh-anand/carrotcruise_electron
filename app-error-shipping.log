@@ -1,0 +1,4 @@
+Uncaught error: TypeError: row is not iterable
+    at Statement.<anonymous> (E:\JS_Workspace\accounting\api\controllers\pdfgenerator.js:95:34)
+    at Statement.replacement (E:\JS_Workspace\accounting\node_modules\sqlite3\lib\trace.js:25:27)
+    at Statement.topLevelDomainCallback (domain.js:137:15)

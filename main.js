@@ -8,6 +8,7 @@ const EOL = require("os").EOL;
 const fs = require("fs");
 const storage = require("electron-json-storage");
 const { exec } = require("child_process");
+const { CloudWatchLogs } = require("aws-sdk");
 
 let CWD = process.cwd();
 let dataPath = null;
@@ -566,7 +567,7 @@ ipcMain.on("create:reportWindow", (event, fileName) => {
     },
   });
 
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   win.loadURL(modalPath);
 
@@ -725,11 +726,25 @@ ipcMain.on("create:invoiceWindow", (event, fileName) => {
 
 // Invoice edit window
 
+
+const fetchItemNames = async () => {
+  return await axios
+    .get(`http://localhost:3000/api/fetchitemnames`)
+    .then((response) => {
+      return response.data.data;
+    })
+    .catch((error) => {
+      alert(error.data.message);
+    });
+}
+
+
 const fetchInvoiceDataByID = async (id) => {
   console.log(id);
   return await axios
     .get(`http://localhost:3000/api/invoice/${id}`)
     .then((response) => {
+      console.log(response.data)
       return response.data.data;
     })
     .catch((error) => {
@@ -766,9 +781,12 @@ ipcMain.on("invoice:edit", (event, args) => {
     customerData().then((data) => {
       inveditWin.webContents.send("fetchCustomers", data);
     });
+    fetchItemNames().then((data) => {
+      console.log(data)
+      inveditWin.webContents.send("fetchItems", data);
+    });
 
     fetchInvoiceDataByID(args.invoiceId).then((invData) => {
-      // console.log(invData);
       inveditWin.webContents.send("sendInvoiceDataForEdit", invData);
     });
   });

@@ -112,28 +112,27 @@ module.exports = {
     }
   },
 
-  updateInvoice: (data, callBack) => {
-    const updateIntoInvoiceAndAccounts = `update invoice set Invoice_Date=?, Customer_Id=?,Base_Amount=?,IGST_Rate=?, CGST_Rate=?,SGST_Rate=?, IGST_Amount=?,CGST_Amount=?,SGST_Amount=?,
-    TOTAl_GST_Amount=?,TOTAL_Amount=?,Invoice_Items=? where Invoice_Number=?;             
-           update payments set EntryDate=?,Credit_Account=?,Credit_Amount=?,Debit_Account=?,Debit_Amount=?,Comments=? where Invoice_Number =? and EntryType=?`;
-    console.log(updateIntoInvoiceAndAccounts);
-    pool.query(
-      updateIntoInvoiceAndAccounts,
-      [
+  updateInvoice: (data, callback) => {
+
+    db.serialize(function (error, results) {
+      db.run("begin transaction");
+
+      const invoice_sql = `update invoices set Invoice_Type=?,Invoice_Date=?, Customer_Id=?,Base_Amount=?,TOTAl_GST_Amount=?,TOTAL_Amount=?,Invoice_Items=? where Invoice_Number=?`;
+
+      const payments_sql = `update payments set EntryDate=?,Credit_Account=?,Credit_Amount=?,Debit_Account=?,Debit_Amount=?,Comments=? where Invoice_Number =? and EntryType=?`;
+
+      db.run(invoice_sql, [
+        data.Invoice_Type,
         data.Invoice_Date,
         data.Agent_Name,
         data.Base_Amount,
-        data.Igst_Rate,
-        data.Cgst_Rate,
-        data.Sgst_Rate,
-        data.Igst_Amount,
-        data.Cgst_Amount,
-        data.Sgst_Amount,
         data.TotalGst_Amount,
         data.Total_Amount,
         data.InvoiceItems,
         data.Invoice_Number,
-        data.Invoice_Date,
+      ]);
+      db.run(payments_sql, [
+        data.EntryDate,
         data.Credit_Account,
         data.Credit_Amount,
         data.Debit_Account,
@@ -141,14 +140,14 @@ module.exports = {
         data.Comments,
         data.InvoiceNumber,
         data.EntryType,
-      ],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+
+      ]);
+      db.run("commit");
+      if (error) {
+        callback(error);
       }
-    );
+      return callback(null, results);
+    })
   },
 
   update: (data, callBack) => {
